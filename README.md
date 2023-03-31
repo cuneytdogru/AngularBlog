@@ -6,7 +6,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 This is a test project developed using Angular v15. 
 
-AngularBlog is a simple blog with posts and comments. App loads posts and comments from API endpoint shows while user scrolls.  
+AngularBlog is a simple blog with posts and comments. App loads posts and comments from API endpoint while user scrolls.  
 
 ![image](https://user-images.githubusercontent.com/60742899/229247820-dfbb2276-2b0a-400c-87ba-51c034855ae0.png)
 
