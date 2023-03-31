@@ -1,0 +1,25 @@
+<div
+  #postContainer
+  class="posts-container"
+  infinite-scroll
+  [infiniteScrollDistance]="scrollDistance"
+  [infiniteScrollThrottle]="throttle"
+  infinite-scroll-parent="true"
+  (scrolled)="onScroll()"
+  [scrollWindow]="false"
+>
+  <ng-blog-blog-post
+    *ngFor="let post of posts$ | async; trackBy: trackPost"
+    [post]="post"
+    [showCommentPreview]="true"
+    (postLiked)="likePost($event)"
+    (postUnliked)="unLikePost($event)"
+    (postShared)="sharePost($event)"
+    (goToDetails)="navigateToPost($event)"
+  >
+  </ng-blog-blog-post>
+
+  <div *ngIf="(posts$ | async)?.length === 0" class="centered-content">
+    No posts founds.
+  </div>
+</div>

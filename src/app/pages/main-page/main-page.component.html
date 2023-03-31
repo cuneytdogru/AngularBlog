@@ -1,0 +1,23 @@
+<mat-drawer-container class="container" [hasBackdrop]="true">
+  <mat-drawer #userMenuDrawer mode="side" position="end">
+    <ng-blog-user-menu></ng-blog-user-menu>
+  </mat-drawer>
+  <mat-drawer #navMenuDrawer mode="side" position="start">
+    <ng-blog-navigation-menu
+      direction="column"
+      (sideNavClose)="closenavMenu()"
+      headerText="Menu"
+    >
+    </ng-blog-navigation-menu>
+  </mat-drawer>
+  <mat-drawer-content class="container">
+    <ng-blog-header
+      (userMenuToggled)="toggleUserMenu()"
+      (navMenuToggled)="toggleNavMenu()"
+    ></ng-blog-header>
+    <div class="main-content">
+      <router-outlet> </router-outlet>
+    </div>
+    <ng-blog-footer></ng-blog-footer>
+  </mat-drawer-content>
+</mat-drawer-container>

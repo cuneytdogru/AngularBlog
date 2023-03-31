@@ -1,0 +1,62 @@
+<mat-card class="blog-post-card">
+  <div class="blog-post-card-header">
+    <div class="post-back-container">
+      <button *ngIf="showBackButton" mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    </div>
+
+    <mat-card-header>
+      <div mat-card-avatar class="post-avatar">
+        <mat-icon>account_circle</mat-icon>
+      </div>
+      <mat-card-title>{{ post?.fullName }}</mat-card-title>
+      <mat-card-subtitle
+        ><small>
+          {{ post?.createdDate | date : "MMM d, y, h:mm a" }}
+        </small></mat-card-subtitle
+      >
+    </mat-card-header>
+  </div>
+  <mat-divider></mat-divider>
+  <img
+    *ngIf="post?.imageURL !== null"
+    mat-card-image
+    src="{{ post?.imageURL }}"
+    alt="Photo of the Post"
+  />
+  <mat-card-content class="post-content">
+    <p>
+      {{ post?.text }}
+    </p>
+  </mat-card-content>
+  <mat-card-actions class="post-actions">
+    <button mat-icon-button (click)="like()">
+      <mat-icon *ngIf="isLiked" color="warn">favorite</mat-icon>
+      <mat-icon *ngIf="!isLiked">favorite_outline</mat-icon>
+    </button>
+    <button mat-icon-button (click)="share()">
+      <mat-icon>share</mat-icon>
+    </button>
+  </mat-card-actions>
+  <mat-card-footer>
+    <div class="post-statistics">
+      <span>{{ post?.likes }} people liked.</span>
+    </div>
+    <div
+      *ngIf="
+        showCommentPreview && post && post.comments && post.comments.length > 0
+      "
+      class="post-comment"
+    >
+      <span
+        ><b>{{ post.comments[0].fullName }}</b>
+        {{ post.comments[0].text }}</span
+      >
+      <a class="text-muted cursor-pointer" (click)="showDetails()"
+        >See all {{ post.totalComments }} comments...</a
+      >
+    </div>
+    <ng-content></ng-content>
+  </mat-card-footer>
+</mat-card>

@@ -1,0 +1,39 @@
+@import "/src/variables.scss";
+
+:host{    
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    margin: 1rem;
+
+    min-width: 200px;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 0.5rem;
+
+  .nav-menu-button-active {
+    background-color: mat-color($primary);
+
+    span {
+      color: white;
+    }
+
+    mat-icon {
+      color: white;
+    }
+  }
+
+  h4.nav-menu-header{
+    margin: 0;
+  }
+}
+
+.flex-row{
+    flex-direction: row;
+}
+
+.flex-column{
+    flex-direction: column;
+}

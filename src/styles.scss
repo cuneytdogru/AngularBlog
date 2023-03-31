@@ -1,1 +1,38 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.centered-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+    width: 100%;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.text-muted{
+    color:lightgray;
+}
+
+.cursor-pointer{
+    cursor: pointer;
+}
+
+
+.posts-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    height: 100%;
+    width: 100%;
+
+    overflow-y: auto;
+    padding: 1rem 0;
+}

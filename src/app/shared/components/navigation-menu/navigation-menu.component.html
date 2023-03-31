@@ -1,0 +1,31 @@
+<div
+  class="nav-menu"
+  [ngClass]="direction == 'row' ? 'flex-row' : 'flex-column'"
+>
+  <ng-container *ngIf="headerText">
+    <h4 class="centered-content nav-menu-header">{{ headerText }}</h4>
+    <mat-divider *ngIf="direction == 'column'"></mat-divider>
+  </ng-container>
+  <ng-content></ng-content>
+  <button
+    class="nav-menu-button"
+    mat-button
+    [routerLink]="['blog']"
+    routerLinkActive="nav-menu-button-active"
+    (click)="closeSideMenu()"
+  >
+    <mat-icon aria-hidden="false" aria-label="blog icon">home</mat-icon>
+    <span>Blog</span>
+  </button>
+
+  <button
+    class="nav-menu-button"
+    mat-button
+    [routerLink]="['about']"
+    routerLinkActive="nav-menu-button-active"
+    (click)="closeSideMenu()"
+  >
+    <mat-icon aria-hidden="false" aria-label="blog icon">info</mat-icon>
+    <span>About</span>
+  </button>
+</div>

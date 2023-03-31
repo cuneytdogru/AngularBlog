@@ -1,0 +1,28 @@
+<mat-toolbar>
+  <mat-toolbar-row>
+    <button
+      *ngIf="!showNavMenu"
+      mat-icon-button
+      aria-label="Menu icon"
+      (click)="toggleNavMenu()"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>{{ title }}</span>
+
+    <div *ngIf="showNavMenu" class="centered-content">
+      <ng-blog-navigation-menu></ng-blog-navigation-menu>
+    </div>
+
+    <span class="menu-spacer"></span>
+    <span class="mat-caption">{{ userFullName }}</span>
+    <button
+      mat-icon-button
+      aria-label="User Menu button"
+      (click)="toggleUserMenu()"
+    >
+      <mat-icon>account_circle</mat-icon>
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+<mat-divider></mat-divider>
