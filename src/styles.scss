@@ -1,7 +1,32 @@
-/* You can add global styles to this file, and also import other style files */
+@import './variables.scss'; 
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.mat-mdc-snack-bar-container {
+    &.error-snackbar {
+      --mdc-snackbar-container-color: #ff0000;
+      --mat-mdc-snack-bar-button-color: #fff;
+      --mdc-snackbar-supporting-text-color: #fff;
+    }
+
+    &.success-snackbar {
+        --mdc-snackbar-container-color: #008000;
+        --mat-mdc-snack-bar-button-color: #fff;
+        --mdc-snackbar-supporting-text-color: #fff;
+      }
+  }
+
+  
+.column-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+}
 
 .centered-content{
     display: flex;

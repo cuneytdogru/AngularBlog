@@ -1,11 +1,11 @@
 <mat-drawer-container class="container" [hasBackdrop]="true">
   <mat-drawer #userMenuDrawer mode="side" position="end">
-    <ng-blog-user-menu></ng-blog-user-menu>
+    <ng-blog-user-menu (userNavClose)="closeUserMenu()"></ng-blog-user-menu>
   </mat-drawer>
   <mat-drawer #navMenuDrawer mode="side" position="start">
     <ng-blog-navigation-menu
       direction="column"
-      (sideNavClose)="closenavMenu()"
+      (sideNavClose)="closeNavMenu()"
       headerText="Menu"
     >
     </ng-blog-navigation-menu>

@@ -1,4 +1,11 @@
-.footer {
+:host {
     bottom: 0;
-    padding: 1rem;
+
+    .footer-content{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 1rem;
+    }
 }
