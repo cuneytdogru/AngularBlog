@@ -1,12 +1,22 @@
 <div class="container random-background">
-  <h2>Welcome to Angular Blog!</h2>
   <div class="card-container">
     <mat-card>
+      <mat-progress-bar
+        *ngIf="isLoading$ | async"
+        mode="indeterminate"
+      ></mat-progress-bar>
       <mat-card-header>
-        <mat-card-subtitle>Login</mat-card-subtitle>
+        <mat-card-title>Angular Blog</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <form [formGroup]="loginForm">
+          <ng-container *ngIf="this.loginForm.errors?.['invalid']">
+            <div class="alert alert-error">
+              <mat-icon>error</mat-icon>
+              {{ this.loginForm.errors?.['invalid'] }}
+            </div>
+          </ng-container>
+
           <mat-form-field appearance="outline">
             <mat-label>Enter your user name / email</mat-label>
             <input
@@ -29,11 +39,12 @@
             />
             <mat-error *ngIf="password?.invalid">Invalid password</mat-error>
           </mat-form-field>
+
           <button
             mat-flat-button
             color="primary"
             (click)="login()"
-            [disabled]="loginForm.invalid"
+            [disabled]="loginForm.invalid || (isLoading$ | async)"
           >
             Login
           </button>

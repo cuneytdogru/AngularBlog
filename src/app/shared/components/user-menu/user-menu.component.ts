@@ -24,9 +24,11 @@ export class UserMenuComponent {
   constructor(private router: Router, private authService: AuthService) {}
 
   async logout() {
-    await this.authService.logout();
-
-    this.router.navigate(['/']);
-    this.userNavClose.emit();
+    try {
+      await this.authService.logout();
+    } finally {
+      this.userNavClose.emit();
+      this.router.navigate(['/']);
+    }
   }
 }

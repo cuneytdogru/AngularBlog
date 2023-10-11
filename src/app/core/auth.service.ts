@@ -1,4 +1,8 @@
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpResponse,
+} from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom, map, tap } from 'rxjs';
 import { ApiResponse } from 'src/app/shared/models/api/apiResponse';
@@ -83,8 +87,6 @@ export class AuthService {
       );
 
       return response;
-    } catch (err) {
-      return err as ApiResponse<string>;
     } finally {
       this._token.next('');
     }

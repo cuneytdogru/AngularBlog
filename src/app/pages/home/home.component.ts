@@ -17,6 +17,4 @@ export class HomeComponent {
   protected currentImagePath = `url('/assets/background/background (${Math.floor(
     Math.random() * this.numberOfImages
   )}).jpg')`;
-
-  constructor(private sanitizer: DomSanitizer) {}
 }

@@ -1,4 +1,4 @@
-import { NgIf } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import {
   FormControl,
@@ -18,6 +18,10 @@ import { LoginForm } from '../models/loginForm';
 import { AuthService } from 'src/app/core/auth.service';
 import { LoginRequestDto } from 'src/app/shared/models/auth/loginRequestDto';
 import { NotificationService } from 'src/app/core/notification.service';
+import { SpinnerService } from 'src/app/core/spinner.service';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -34,14 +38,20 @@ import { NotificationService } from 'src/app/core/notification.service';
     FormsModule,
     ReactiveFormsModule,
     NgIf,
+    MatDividerModule,
+    MatProgressBarModule,
+    AsyncPipe,
   ],
 })
 export class LoginComponent {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private spinnerService: SpinnerService
   ) {}
+
+  isLoading$ = this.spinnerService.visibility$;
 
   loginForm = new FormGroup<LoginForm>({
     userName: new FormControl<string>('', {
@@ -64,14 +74,18 @@ export class LoginComponent {
   async login() {
     if (this.loginForm.invalid) return;
 
-    const loginRequest = this.loginForm.value as LoginRequestDto;
-    const response = await this.authService.login(loginRequest);
+    try {
+      const loginRequest = this.loginForm.value as LoginRequestDto;
 
-    if (response.isError)
-      this.notificationService.showError(
-        response.errorMessage ?? 'Login failed.'
-      );
-    else this.router.navigate(['main']);
+      await this.authService.login(loginRequest);
+
+      this.notificationService.dismiss();
+      this.router.navigate(['main']);
+    } catch (err: any) {
+      const errorMessage = err?.error?.errorMessage ?? 'Login failed.';
+      this.loginForm.setErrors({ invalid: errorMessage });
+      this.notificationService.showError(errorMessage);
+    }
   }
 
   signUp() {

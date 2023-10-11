@@ -14,6 +14,10 @@ export class NotificationService {
 
   constructor(public snackBar: MatSnackBar) {}
 
+  dismiss() {
+    this.snackBar.dismiss();
+  }
+
   showSuccess(message: string): void {
     this.snackBar.open(message, 'X', {
       panelClass: ['success-snackbar'],

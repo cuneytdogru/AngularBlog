@@ -10,6 +10,7 @@ import { GlobalErrorHandler } from './core/global-error-handler';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { HomeComponent } from './pages/home/home.component';
 import { AuthInterceptor } from './core/http-interceptors/auth.interceptor';
+import { SpinnerInterceptor } from './core/http-interceptors/spinner.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,6 +27,11 @@ import { AuthInterceptor } from './core/http-interceptors/auth.interceptor';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: SpinnerInterceptor,
       multi: true,
     },
   ],

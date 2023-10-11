@@ -1,63 +1,94 @@
-@import './variables.scss'; 
+@import "./variables.scss";
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .mat-mdc-snack-bar-container {
-    &.error-snackbar {
-      --mdc-snackbar-container-color: #ff0000;
-      --mat-mdc-snack-bar-button-color: #fff;
-      --mdc-snackbar-supporting-text-color: #fff;
-    }
-
-    &.success-snackbar {
-        --mdc-snackbar-container-color: #008000;
-        --mat-mdc-snack-bar-button-color: #fff;
-        --mdc-snackbar-supporting-text-color: #fff;
-      }
+  &.error-snackbar {
+    --mdc-snackbar-container-color: #ff0000;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
   }
 
-  
+  &.success-snackbar {
+    --mdc-snackbar-container-color: #008000;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
+}
+
 .column-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
 }
 
-.centered-content{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.centered-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
 }
 
-.text-center{
-    text-align: center;
+.text-center {
+  text-align: center;
 }
 
-.text-muted{
-    color:lightgray;
+.text-muted {
+  color: lightgray;
 }
 
-.cursor-pointer{
-    cursor: pointer;
+.cursor-pointer {
+  cursor: pointer;
 }
 
+.alert {
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.5rem;
+  padding: 1rem;
+
+  background-color: $primary-color;
+  color: $primary-text-color;
+
+  border-radius: 5px;
+
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+  &-error {
+    background-color: $warn-color;
+    color: $warn-text-color;
+
+    mat-icon {
+      color: maroon;
+    }
+  }
+}
 
 .posts-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
-    height: 100%;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-    overflow-y: auto;
-    padding: 1rem 0;
+  height: 100%;
+  width: 100%;
+
+  overflow-y: auto;
+  padding: 1rem 0;
 }

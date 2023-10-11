@@ -33,11 +33,19 @@
       min-width: 300px;
       max-width: 500px;
 
+      mat-card-header {
+        justify-content: center;
+
+        mat-card-title {
+          margin: 1rem;
+        }
+      }
+
       form {
         display: flex;
         flex-direction: column;
 
-        padding: 1rem;
+        padding: 0 1rem 0 1rem;
       }
 
       mat-card-actions {

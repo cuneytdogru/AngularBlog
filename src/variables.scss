@@ -1,6 +1,12 @@
-@use '@angular/material' as mat;
-@import '@angular/material/theming';
+@use "@angular/material" as mat;
+@import "@angular/material/theming";
 
 $primary: mat.define-palette(mat.$indigo-palette, 800);
 $accent: mat.define-palette(mat.$indigo-palette, 100, 200, 300);
 $warn: mat.define-palette(mat.$red-palette);
+
+$primary-color: mat.get-color-from-palette($primary, default);
+$primary-text-color: mat.get-color-from-palette($primary, default-contrast);
+
+$warn-color: mat.get-color-from-palette($warn, default);
+$warn-text-color: mat.get-color-from-palette($warn, default-contrast);
