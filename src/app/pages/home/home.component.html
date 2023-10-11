@@ -1,2 +1,4 @@
-<router-outlet></router-outlet>
-<ng-blog-footer></ng-blog-footer>
+<div class="content" [ngStyle]="{ '--background-image': currentImagePath }">
+  <router-outlet></router-outlet>
+  <ng-blog-footer></ng-blog-footer>
+</div>
