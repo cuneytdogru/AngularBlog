@@ -1,0 +1,91 @@
+<div class="container">
+  <div class="header">
+    <mat-icon>account_circle</mat-icon>
+    <h1>Register to Angular Blog</h1>
+  </div>
+  <div class="card-container">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>Registration Form</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="registerForm">
+          <mat-form-field appearance="outline">
+            <mat-label>Enter your name</mat-label>
+            <input
+              matInput
+              placeholder="Pat Anderson"
+              formControlName="fullName"
+              required
+            />
+            <mat-error *ngIf="fullName?.invalid">Invalid name</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Enter your email</mat-label>
+            <input
+              matInput
+              placeholder="pat@example.com"
+              formControlName="email"
+              required
+            />
+            <mat-error *ngIf="email?.invalid">Invalid e-mail address</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Enter your user name</mat-label>
+            <input
+              matInput
+              placeholder="pat"
+              formControlName="userName"
+              required
+            />
+            <mat-error *ngIf="userName?.invalid">Invalid user name</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Enter your password</mat-label>
+            <input
+              matInput
+              placeholder=""
+              formControlName="password"
+              type="password"
+              required
+            />
+            <mat-error *ngIf="password?.invalid">Invalid password</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Retype your password</mat-label>
+            <input
+              matInput
+              placeholder=""
+              formControlName="confirmPassword"
+              type="password"
+              required
+            />
+            <mat-error *ngIf="confirmPassword?.errors?.['notMatch']"
+              >Password does not match</mat-error
+            >
+          </mat-form-field>
+
+          <mat-checkbox formControlName="confirmation" color="primary"
+            >I accept everthing!</mat-checkbox
+          >
+        </form>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button (click)="cancel()" color="warn">Cancel</button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="register()"
+          [disabled]="registerForm.invalid"
+        >
+          Register
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

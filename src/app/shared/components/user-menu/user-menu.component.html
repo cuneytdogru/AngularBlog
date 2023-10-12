@@ -2,9 +2,16 @@
   <div class="image-container">
     <mat-icon>person</mat-icon>
   </div>
-  <h2>{{ userFullName }}</h2>
+  <span>Welcome</span>
+  <h2>{{ userFullName$ | async }}</h2>
 </div>
 <mat-divider></mat-divider>
 <div class="menu-container">
-  <p class="text-center">You are not signed in.</p>
+  <button mat-flat-button class="text-center">
+    <mat-icon>settings</mat-icon>Settings
+  </button>
+  <button mat-flat-button color="accent" class="text-center" (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    Logout
+  </button>
 </div>

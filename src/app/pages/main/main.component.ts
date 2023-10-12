@@ -1,11 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
-import {
-  MatDrawer,
-  MatDrawerContainer,
-  MatDrawerContent,
-  MatSidenavModule,
-} from '@angular/material/sidenav';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import { FooterComponent } from 'src/app/shared/components/footer/footer.component';
 import { HeaderComponent } from 'src/app/shared/components/header/header.component';
@@ -14,9 +9,9 @@ import { UserMenuComponent } from 'src/app/shared/components/user-menu/user-menu
 
 @Component({
   standalone: true,
-  selector: 'ng-blog-main-page',
-  templateUrl: './main-page.component.html',
-  styleUrls: ['./main-page.component.scss'],
+  selector: 'ng-blog-main',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.scss'],
   imports: [
     RouterModule,
     HeaderComponent,
@@ -27,7 +22,7 @@ import { UserMenuComponent } from 'src/app/shared/components/user-menu/user-menu
     NavigationMenuComponent,
   ],
 })
-export class MainPageComponent {
+export class MainComponent {
   @ViewChild('userMenuDrawer') userMenuDrawer!: MatDrawer;
   @ViewChild('navMenuDrawer') navMenuDrawer!: MatDrawer;
 
@@ -39,7 +34,11 @@ export class MainPageComponent {
     this.navMenuDrawer.toggle();
   }
 
-  closenavMenu() {
+  closeNavMenu() {
     this.navMenuDrawer.close();
+  }
+
+  closeUserMenu() {
+    this.userMenuDrawer.close();
   }
 }

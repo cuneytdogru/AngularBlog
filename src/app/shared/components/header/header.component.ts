@@ -1,4 +1,4 @@
-import { CommonModule, NgIf } from '@angular/common';
+import { AsyncPipe, CommonModule, NgIf } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -15,6 +15,9 @@ import { DEFAULT_USER_NAME } from '../../models/constants/default-user-name';
 import { SMALL_WIDTH, XSMALL_WIDTH } from '../../models/constants/media-size';
 import { APPLICATION_TITLE } from '../../models/constants/title';
 import { NavigationMenuComponent } from '../navigation-menu/navigation-menu.component';
+import { AuthService } from 'src/app/core/auth.service';
+import { map } from 'rxjs';
+import { JwtToken } from '../../models/auth/JwtToken';
 
 @Component({
   standalone: true,
@@ -23,6 +26,7 @@ import { NavigationMenuComponent } from '../navigation-menu/navigation-menu.comp
   styleUrls: ['./header.component.scss'],
   imports: [
     NgIf,
+    AsyncPipe,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
@@ -36,14 +40,15 @@ export class HeaderComponent {
   @Output() navMenuToggled = new EventEmitter();
 
   title = APPLICATION_TITLE;
-  userFullName = DEFAULT_USER_NAME;
+
+  userFullName$ = this.authService.userFullName$;
 
   screenHeight = 0;
   screenWidth = 0;
 
   showNavMenu = false;
 
-  constructor() {
+  constructor(private authService: AuthService) {
     this.getScreenSize();
   }
 
