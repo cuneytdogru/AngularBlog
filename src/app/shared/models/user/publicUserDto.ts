@@ -1,6 +1,6 @@
 import { BaseDto } from '../api/baseDto';
 
-export interface UserDto extends BaseDto {
+export interface PublicUserDto extends BaseDto {
   fullName: string;
   userName: string;
   email: string;
