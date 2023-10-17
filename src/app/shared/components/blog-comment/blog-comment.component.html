@@ -6,7 +6,7 @@
         <div mat-card-avatar class="comment-avatar">
           <mat-icon>account_circle</mat-icon>
         </div>
-        <mat-card-title>{{ comment.fullName }}</mat-card-title>
+        <mat-card-title>{{ comment?.user?.fullName }}</mat-card-title>
         <mat-card-subtitle
           ><small>
             {{ comment?.createdDate | date : "MMM d, y, h:mm a" }}

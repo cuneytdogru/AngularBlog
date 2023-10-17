@@ -6,7 +6,6 @@ import { BlogPostComponent } from 'src/app/shared/components/blog-post/blog-post
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
 import { PostService } from '../../services/post.service';
 import { BlogCommentComponent } from 'src/app/shared/components/blog-comment/blog-comment.component';
-import { CommentService } from '../../services/comment.service';
 
 @Component({
   standalone: true,
@@ -21,7 +20,6 @@ export class BlogDetailComponent {
 
   constructor(
     private postService: PostService,
-    private commentService: CommentService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -46,7 +44,7 @@ export class BlogDetailComponent {
 
   comments$ = combineLatest([
     this.postComments$,
-    this.commentService.comments$,
+    this.postService.comments$,
   ]).pipe(map((a) => (a[1].length > 0 ? a[1] : a[0])));
 
   likePost(post: PostDto) {
@@ -62,9 +60,8 @@ export class BlogDetailComponent {
   }
 
   loadMoreComments(post: PostDto) {
-    this.commentService
-      .getComments({
-        postId: post.id,
+    this.postService
+      .getComments(post.id, {
         skip: this.loadedComments,
         take: this.DEFAULT_TAKE,
       })

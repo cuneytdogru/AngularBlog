@@ -58,7 +58,7 @@ export class BlogComponent implements OnInit {
   }
 
   navigateToPost(post: PostDto) {
-    this.router.navigate(['/blog/', post.id]);
+    this.router.navigate(['main', 'blog', post.id]);
   }
 
   onScroll() {

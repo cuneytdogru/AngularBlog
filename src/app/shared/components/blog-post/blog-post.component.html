@@ -10,7 +10,7 @@
       <div mat-card-avatar class="post-avatar">
         <mat-icon>account_circle</mat-icon>
       </div>
-      <mat-card-title>{{ post?.fullName }}</mat-card-title>
+      <mat-card-title>{{ post?.user?.fullName }}</mat-card-title>
       <mat-card-subtitle
         ><small>
           {{ post?.createdDate | date : "MMM d, y, h:mm a" }}
@@ -41,7 +41,7 @@
   </mat-card-actions>
   <mat-card-footer>
     <div class="post-statistics">
-      <span>{{ post?.likes }} people liked.</span>
+      <span>{{ post?.totalLikes }} people liked.</span>
     </div>
     <div
       *ngIf="
@@ -50,7 +50,7 @@
       class="post-comment"
     >
       <span
-        ><b>{{ post.comments[0].fullName }}</b>
+        ><b>{{ post.comments[0].user.fullName }}</b>
         {{ post.comments[0].text }}</span
       >
       <a class="text-muted cursor-pointer" (click)="showDetails()"
