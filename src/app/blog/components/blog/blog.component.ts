@@ -17,13 +17,22 @@ import { BlogPostComponent } from 'src/app/shared/components/blog-post/blog-post
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
 import { DEFAULT_TAKE } from 'src/app/shared/models/constants/filter';
 import { PostService } from '../../services/post.service';
+import { SpinnerService } from 'src/app/core/spinner.service';
+import { BlogPostSkeletonComponent } from 'src/app/shared/components/blog-post-skeleton/blog-post-skeleton.component';
 
 @Component({
   standalone: true,
   selector: 'ng-blog-blog',
   templateUrl: './blog.component.html',
   styleUrls: ['./blog.component.scss'],
-  imports: [NgIf, NgFor, AsyncPipe, BlogPostComponent, InfiniteScrollModule],
+  imports: [
+    NgIf,
+    NgFor,
+    AsyncPipe,
+    BlogPostComponent,
+    InfiniteScrollModule,
+    BlogPostSkeletonComponent,
+  ],
 })
 export class BlogComponent implements OnInit {
   throttle = 300;
@@ -34,7 +43,13 @@ export class BlogComponent implements OnInit {
 
   posts$ = this.postService.posts$;
 
-  constructor(private postService: PostService, private router: Router) {}
+  isLoading$ = this.spinnerService.visibility$;
+
+  constructor(
+    private postService: PostService,
+    private router: Router,
+    private spinnerService: SpinnerService
+  ) {}
 
   ngOnInit(): void {
     if (!this.postService.isInitialized)

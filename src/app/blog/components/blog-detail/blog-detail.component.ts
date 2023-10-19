@@ -1,11 +1,22 @@
 import { AsyncPipe, NgIf } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, combineLatest, map, switchMap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subject,
+  catchError,
+  combineLatest,
+  map,
+  merge,
+  switchMap,
+  throwError,
+} from 'rxjs';
 import { BlogPostComponent } from 'src/app/shared/components/blog-post/blog-post.component';
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
 import { PostService } from '../../services/post.service';
 import { BlogCommentComponent } from 'src/app/shared/components/blog-comment/blog-comment.component';
+import { SpinnerService } from 'src/app/core/spinner.service';
+import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
 
 @Component({
   standalone: true,
@@ -14,38 +25,42 @@ import { BlogCommentComponent } from 'src/app/shared/components/blog-comment/blo
   styleUrls: ['./blog-detail.component.scss'],
   imports: [BlogPostComponent, BlogCommentComponent, AsyncPipe, NgIf],
 })
-export class BlogDetailComponent {
+export class BlogDetailComponent implements OnInit {
   private loadedComments = 0;
   private DEFAULT_TAKE = 10;
+
+  private _post$ = new BehaviorSubject<PostDto | undefined>(undefined);
+  protected post$ = this._post$.asObservable();
+
+  private _comments$ = new BehaviorSubject<CommentDto[]>([]);
+  protected comments$ = this._comments$.asObservable();
 
   constructor(
     private postService: PostService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private spinnerService: SpinnerService
   ) {}
 
-  post$ = this.route.paramMap.pipe(
-    switchMap((params) => {
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(async (params) => {
       const postId = params.get('id') as string;
-      return this.postService.getPost(postId);
-    }),
-    map((response) => {
+
+      const response = await this.postService.getPost(postId);
+
       if (response.isError) this.router.navigate(['404']);
 
-      return response.result;
-    }),
-    catchError((err) => {
-      this.router.navigate(['404']);
-      return throwError(() => err);
-    })
-  );
+      const post = response.result;
 
-  postComments$ = this.post$.pipe(map((x) => x?.comments));
+      this._post$.next(post);
 
-  comments$ = combineLatest([
-    this.postComments$,
-    this.postService.comments$,
-  ]).pipe(map((a) => (a[1].length > 0 ? a[1] : a[0])));
+      if (post?.comments) this._comments$.next(post.comments);
+
+      this.loadedComments = post?.comments.length ?? 0;
+    });
+  }
+
+  isLoading$ = this.spinnerService.visibility$;
 
   likePost(post: PostDto) {
     this.postService.likePost(post);
@@ -65,6 +80,14 @@ export class BlogDetailComponent {
         skip: this.loadedComments,
         take: this.DEFAULT_TAKE,
       })
-      .then(() => (this.loadedComments += this.DEFAULT_TAKE));
+      .then((response) => {
+        if (response.result?.data) {
+          this._comments$.next([
+            ...this._comments$.value,
+            ...response.result?.data,
+          ]);
+          this.loadedComments += this.DEFAULT_TAKE;
+        }
+      });
   }
 }
