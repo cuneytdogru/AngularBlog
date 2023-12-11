@@ -6,16 +6,18 @@
   [infiniteScrollThrottle]="throttle"
   infinite-scroll-parent="true"
   (scrolled)="onScroll()"
+  (scrolledUp)="onScrollUp()"
   [scrollWindow]="false"
 >
   <ng-blog-blog-post
-    *ngFor="let post of posts$ | async; trackBy: trackPost"
+    #posts
+    *ngFor="let post of posts$ | async; trackBy: trackPost; let i = index"
     [post]="post"
     [showCommentPreview]="true"
     (postLiked)="likePost($event)"
     (postUnliked)="unLikePost($event)"
     (postShared)="sharePost($event)"
-    (goToDetails)="navigateToPost($event)"
+    (goToDetails)="navigateToPost($event, i)"
   >
   </ng-blog-blog-post>
 
