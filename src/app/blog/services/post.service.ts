@@ -21,9 +21,6 @@ export class PostService {
   _posts = new BehaviorSubject<PostDto[]>([]);
   posts$ = this._posts.asObservable();
 
-  _comments = new BehaviorSubject<CommentDto[]>([]);
-  comments$ = this._comments.asObservable();
-
   constructor(
     private httpClient: HttpClient,
     @Inject(BASE_PATH) basePath: string
@@ -148,16 +145,6 @@ export class PostService {
       })
     );
 
-    if (
-      response &&
-      !response.isError &&
-      response.result &&
-      response.result.data
-    ) {
-      this.isInitialized = true;
-      this.appendComments(response.result.data);
-    } else console.log('Error occurred: ' + response.errorMessage, response);
-
     return response;
   }
 
@@ -168,12 +155,6 @@ export class PostService {
     const values = this.unique([...this._posts.value, ...data]);
 
     this._posts.next(this.sort(values));
-  }
-
-  appendComments(data: CommentDto[]) {
-    const values = this.unique([...this._comments.value, ...data]);
-
-    this._comments.next(this.sort(values));
   }
 
   private unique<T extends BaseDto>(data: T[]): T[] {

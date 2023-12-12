@@ -19,7 +19,16 @@
   >
   </ng-blog-blog-post>
 
-  <div *ngIf="(posts$ | async)?.length === 0" class="centered-content">
+  <div
+    *ngIf="!(isLoading$ | async) && (posts$ | async)?.length === 0"
+    class="centered-content"
+  >
     No posts founds.
   </div>
+
+  <ng-container *ngIf="isLoading$ | async">
+    <ng-blog-blog-post-skeleton></ng-blog-blog-post-skeleton>
+    <ng-blog-blog-post-skeleton></ng-blog-blog-post-skeleton>
+    <ng-blog-blog-post-skeleton></ng-blog-blog-post-skeleton>
+  </ng-container>
 </div>

@@ -8,7 +8,6 @@ import { BASE_PATH } from './shared/models/constants/base-path';
 import { environment } from 'src/environment/environment.dev';
 import { GlobalErrorHandler } from './core/global-error-handler';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { HomeComponent } from './pages/home/home.component';
 import { AuthInterceptor } from './core/http-interceptors/auth.interceptor';
 import { SpinnerInterceptor } from './core/http-interceptors/spinner.interceptor';
 

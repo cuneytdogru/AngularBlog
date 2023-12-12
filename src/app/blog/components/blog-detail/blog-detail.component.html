@@ -1,20 +1,24 @@
-<div *ngIf="post$ | async as post" class="posts-container">
-  <ng-blog-blog-post
-    [post]="post"
-    [showBackButton]="true"
-    (postLiked)="likePost($event)"
-    (postUnliked)="unLikePost($event)"
-    (postShared)="sharePost($event)"
-  >
-    <ng-container *ngIf="comments$ | async as comments">
-      <ng-blog-blog-comment [comments]="comments">
-        <a
-          *ngIf="post.totalComments > comments.length"
-          class="text-muted cursor-pointer centered-content"
-          (click)="loadMoreComments(post)"
-          >Load more comments...</a
-        >
-      </ng-blog-blog-comment>
-    </ng-container>
-  </ng-blog-blog-post>
-</div>
+<ng-container *ngIf="post$ | async as post; else loading">
+  <div *ngIf="post" class="posts-container">
+    <ng-blog-blog-post
+      [post]="post"
+      [showBackButton]="true"
+      (postLiked)="likePost($event)"
+      (postUnliked)="unLikePost($event)"
+      (postShared)="sharePost($event)"
+    >
+      <ng-container *ngIf="comments$ | async as comments">
+        <ng-blog-blog-comment [comments]="comments">
+          <a
+            *ngIf="post.totalComments > comments.length"
+            class="text-muted cursor-pointer centered-content"
+            (click)="loadMoreComments(post)"
+            >Load more comments...</a
+          >
+        </ng-blog-blog-comment>
+      </ng-container>
+    </ng-blog-blog-post>
+  </div>
+</ng-container>
+
+<ng-template #loading> Loading... </ng-template>
