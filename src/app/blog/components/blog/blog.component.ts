@@ -1,24 +1,22 @@
-import { AsyncPipe, NgFor, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   AfterViewInit,
   Component,
   ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
+  QueryList,
+  ViewChildren,
 } from '@angular/core';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
-import {
-  InfiniteScrollDirective,
-  InfiniteScrollModule,
-} from 'ngx-infinite-scroll';
-import { Subject, filter, takeUntil } from 'rxjs';
+import { Router } from '@angular/router';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { Subject } from 'rxjs';
+import { SpinnerService } from 'src/app/core/spinner.service';
+import { StateService } from 'src/app/core/state.service';
+import { BlogPostSkeletonComponent } from 'src/app/shared/components/blog-post-skeleton/blog-post-skeleton.component';
 import { BlogPostComponent } from 'src/app/shared/components/blog-post/blog-post.component';
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
 import { DEFAULT_TAKE } from 'src/app/shared/models/constants/filter';
+import { Append } from '../../models/append.enum';
 import { PostService } from '../../services/post.service';
-import { SpinnerService } from 'src/app/core/spinner.service';
-import { BlogPostSkeletonComponent } from 'src/app/shared/components/blog-post-skeleton/blog-post-skeleton.component';
 
 @Component({
   standalone: true,
@@ -34,26 +32,52 @@ import { BlogPostSkeletonComponent } from 'src/app/shared/components/blog-post-s
     BlogPostSkeletonComponent,
   ],
 })
-export class BlogComponent implements OnInit {
+export class BlogComponent implements AfterViewInit {
   throttle = 300;
   scrollDistance = 2;
-
   page = 0;
   size = DEFAULT_TAKE;
 
+  destroying$ = new Subject<boolean>();
   posts$ = this.postService.posts$;
-
   isLoading$ = this.spinnerService.visibility$;
+
+  @ViewChildren('posts', { read: ElementRef })
+  postElements!: QueryList<ElementRef>;
 
   constructor(
     private postService: PostService,
     private router: Router,
-    private spinnerService: SpinnerService
-  ) {}
+    private spinnerService: SpinnerService,
+    private stateService: StateService
+  ) {
+    if (!postService.isInitialized) {
+      this.stateService.clearBlogPostIndex();
+      this.postService.getPosts({ skip: this.page, take: this.size });
+    } else {
+      if (this.stateService.getBlogPage())
+        this.page = this.stateService.getBlogPage();
+    }
+  }
 
-  ngOnInit(): void {
-    if (!this.postService.isInitialized)
-      this.postService.getPosts({ skip: 0, take: this.size });
+  scrollToLastPost() {
+    const index = this.stateService.getBlogPostIndex();
+
+    if (index) {
+      this.scrollToPost(index);
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.scrollToLastPost();
+  }
+
+  scrollToPost(index: number): void {
+    const lastPostElement = this.postElements?.toArray()[index].nativeElement;
+
+    setTimeout(() => {
+      lastPostElement.scrollIntoView({ block: 'center' });
+    }, 0);
   }
 
   trackPost(index: number, item: PostDto) {
@@ -72,12 +96,28 @@ export class BlogComponent implements OnInit {
     //TODO: Copy link
   }
 
-  navigateToPost(post: PostDto) {
+  navigateToPost(post: PostDto, index: number) {
+    this.stateService.setBlogPostIndex(index);
+    this.stateService.setBlogPage(this.page);
     this.router.navigate(['main', 'blog', post.id]);
   }
 
   onScroll() {
     this.page += this.size;
+    this.stateService.setBlogPage(this.page);
+
     this.postService.getPosts({ skip: this.page, take: this.size });
+  }
+
+  onScrollUp() {
+    this.page = this.page - this.size;
+
+    if (this.page < 0)
+      if (this.page > this.size * -1) this.page = 0;
+      else return;
+
+    this.stateService.setBlogPage(this.page);
+
+    this.postService.getPosts({ skip: this.page, take: this.size }, Append.Top);
   }
 }

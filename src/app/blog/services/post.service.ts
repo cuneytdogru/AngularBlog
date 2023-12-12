@@ -1,15 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Inject, Injectable, Optional } from '@angular/core';
-import { PostDto } from 'src/app/shared/models/blog/post/postDto';
-import { PagedResponse } from 'src/app/shared/models/api/pagedResponse';
-import { PostFilter } from 'src/app/shared/models/blog/post/postFilter';
-import { ApiResponse } from 'src/app/shared/models/api/apiResponse';
+import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { BASE_PATH } from 'src/app/shared/models/constants/base-path';
-import { LikePostDto } from 'src/app/shared/models/blog/post/likePostDto';
-import { CommentFilter } from 'src/app/shared/models/blog/comment/commentFilter';
-import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
+import { ApiResponse } from 'src/app/shared/models/api/apiResponse';
 import { BaseDto } from 'src/app/shared/models/api/baseDto';
+import { PagedResponse } from 'src/app/shared/models/api/pagedResponse';
+import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
+import { CommentFilter } from 'src/app/shared/models/blog/comment/commentFilter';
+import { LikePostDto } from 'src/app/shared/models/blog/post/likePostDto';
+import { PostDto } from 'src/app/shared/models/blog/post/postDto';
+import { PostFilter } from 'src/app/shared/models/blog/post/postFilter';
+import { BASE_PATH } from 'src/app/shared/models/constants/base-path';
+import { Append } from '../models/append.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +31,7 @@ export class PostService {
 
   isInitialized = false;
 
-  async getPosts(filter: PostFilter) {
+  async getPosts(filter: PostFilter, append = Append.Bottom) {
     let localVarQueryParameters = new HttpParams({});
 
     if (filter.skip !== undefined && filter.skip !== null) {
@@ -149,10 +150,13 @@ export class PostService {
   }
 
   appendPost(data: PostDto) {
-    this.appendPosts([data]);
+    this.appendPosts([data], Append.Bottom);
   }
-  appendPosts(data: PostDto[]) {
-    const values = this.unique([...this._posts.value, ...data]);
+  appendPosts(data: PostDto[], append = Append.Bottom) {
+    let values = [];
+    if (append === Append.Top)
+      values = this.unique([...data, ...this._posts.value]);
+    else values = this.unique([...this._posts.value, ...data]);
 
     this._posts.next(this.sort(values));
   }
@@ -162,6 +166,8 @@ export class PostService {
   }
 
   private sort<T extends BaseDto>(data: T[]): T[] {
-    return data.sort((a, b) => +b.createdDate - +a.createdDate);
+    return data.sort(
+      (a, b) => +new Date(b.createdDate) - +new Date(a.createdDate)
+    );
   }
 }
