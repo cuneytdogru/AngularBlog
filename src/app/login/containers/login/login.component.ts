@@ -10,18 +10,17 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
-import { LoginForm } from '../models/loginForm';
 import { AuthService } from 'src/app/core/auth.service';
-import { LoginRequestDto } from 'src/app/shared/models/auth/loginRequestDto';
 import { NotificationService } from 'src/app/core/notification.service';
 import { SpinnerService } from 'src/app/core/spinner.service';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { BehaviorSubject } from 'rxjs';
+import { LoginRequestDto } from 'src/app/shared/models/auth/loginRequestDto';
+import { LoginForm } from '../../models/loginForm';
 
 @Component({
   standalone: true,
