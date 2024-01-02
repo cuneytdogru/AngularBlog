@@ -6,6 +6,7 @@ import { BlogComponent } from './blog/containers/blog/blog.component';
 import { LoginComponent } from './login/containers/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
 import { MainComponent } from './pages/main/main.component';
+import { ProfileComponent } from './profile/containers/profile/profile.component';
 import { RegisterComponent } from './register/containers/register/register.component';
 import { NotFoundComponent } from './shared/components/not-found/not-found.component';
 import { AuthGuard } from './shared/guards/auth.guard';
@@ -39,6 +40,10 @@ const routes: Routes = [
       {
         path: 'blog/:id',
         component: BlogDetailComponent,
+      },
+      {
+        path: 'profile/:userName',
+        component: ProfileComponent,
       },
       { path: 'about', component: AboutComponent },
       { path: '**', component: NotFoundComponent },

@@ -10,7 +10,9 @@
       <div mat-card-avatar class="post-avatar">
         <mat-icon>account_circle</mat-icon>
       </div>
-      <mat-card-title>{{ post?.user?.fullName }}</mat-card-title>
+      <mat-card-title (click)="goToProfile()">{{
+        post?.user?.fullName
+      }}</mat-card-title>
       <mat-card-subtitle
         ><small>
           {{ post?.createdDate | date : "MMM d, y, h:mm a" }}
@@ -54,7 +56,7 @@
         ><b>{{ post.comments[0].user.fullName }}</b>
         {{ post.comments[0].text }}</span
       >
-      <a class="text-muted cursor-pointer" (click)="showDetails()"
+      <a class="text-muted cursor-pointer" (click)="goToDetails()"
         >See all {{ post.totalComments }} comments...</a
       >
     </div>

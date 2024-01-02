@@ -1,0 +1,42 @@
+<mat-card class="profile-card">
+  <div class="profile-card-header">
+    <div class="profile-card-header">
+      <div class="profile-back-container">
+        <button mat-icon-button (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+
+      <mat-card-header>
+        <mat-card-title>{{ profile?.fullName }}</mat-card-title>
+        <mat-card-subtitle>
+          <small>{{ profile?.totalPosts }} post(s)</small></mat-card-subtitle
+        >
+      </mat-card-header>
+    </div>
+  </div>
+
+  <div class="profile-background"></div>
+  <div class="profile-content">
+    <div class="profile-avatar">
+      <mat-icon>account_circle</mat-icon>
+    </div>
+    <div class="profile-description text-muted">
+      <p>{{ profile?.description }}</p>
+    </div>
+  </div>
+  <div class="profile-sub-info">
+    <div>
+      <h1>
+        <strong>{{ profile?.fullName }}</strong>
+      </h1>
+      <small class="text-muted">{{ profile?.userName }}</small>
+    </div>
+
+    <div>
+      <p>
+        Joined on <i>{{ profile?.createdDate | date : "MMM d, y" }}</i>
+      </p>
+    </div>
+  </div>
+</mat-card>

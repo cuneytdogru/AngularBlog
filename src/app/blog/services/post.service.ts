@@ -62,15 +62,8 @@ export class PostService {
       )
     );
 
-    if (
-      response &&
-      !response.isError &&
-      response.result &&
-      response.result.data
-    ) {
-      this.isInitialized = true;
-      this.appendPosts(response.result.data);
-    } else console.log('Error occured: ' + response.errorMessage, response);
+    this.isInitialized = true;
+    this.appendPosts(response!.result!.data);
 
     return response;
   }
@@ -82,9 +75,7 @@ export class PostService {
       )
     );
 
-    if (response && !response.isError && response.result)
-      this.appendPost(response.result);
-    else console.log('Error occured: ' + response.errorMessage, response);
+    this.appendPost(response!.result!);
 
     return response;
   }
@@ -101,9 +92,7 @@ export class PostService {
       )
     );
 
-    if (response && !response.isError && response.result)
-      this.appendPost(response.result);
-    else console.log('Error occurred: ' + response.errorMessage, response);
+    this.appendPost(response!.result!);
 
     return response;
   }

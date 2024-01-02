@@ -1,28 +1,20 @@
-.comments-container {
-  display: flex;
-  flex-direction: column;
+.comment-card {
+  margin: 0.5rem;
+  border: none;
+  box-shadow: none;
 
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  .comment-avatar {
+    mat-icon {
+      font-size: 3rem;
+      width: auto;
+      height: auto;
 
-  .comment-card {
-    margin: 0.5rem;
-    border: none;
-    box-shadow: none;
-
-    .comment-avatar {
-        mat-icon {
-          font-size: 3rem;
-          width: auto;
-          height: auto;
-  
-          color: lightgray;
-        }
-      }
-
-    .comment-content {
-      display: flex;
-      flex-direction: column;
+      color: lightgray;
     }
+  }
+
+  .comment-content {
+    display: flex;
+    flex-direction: column;
   }
 }

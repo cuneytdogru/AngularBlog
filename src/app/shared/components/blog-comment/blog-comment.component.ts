@@ -1,9 +1,9 @@
-import { Component, Input } from '@angular/core';
-import { CommentDto } from '../../models/blog/comment/commentDto';
 import { DatePipe, NgFor } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
+import { CommentDto } from '../../models/blog/comment/commentDto';
 
 @Component({
   standalone: true,
@@ -13,9 +13,5 @@ import { MatCardModule } from '@angular/material/card';
   imports: [NgFor, MatCardModule, MatIconModule, DatePipe, MatDividerModule],
 })
 export class BlogCommentComponent {
-  @Input() comments: CommentDto[] | undefined = [];
-
-  trackComment(index: number, item: CommentDto) {
-    return item.id;
-  }
+  @Input() comment?: CommentDto | null = undefined;
 }

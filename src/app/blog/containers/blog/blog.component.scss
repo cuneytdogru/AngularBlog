@@ -16,5 +16,11 @@
   width: 100%;
 
   overflow-y: auto;
-  padding: 1rem 0;
+  padding: 0.5rem 0.5rem;
+
+  margin-right: 1rem;
+
+  ng-blog-blog-post {
+    width: 33%;
+  }
 }

@@ -1,0 +1,11 @@
+<div class="profile-container">
+  <ng-blog-profile-card [profile]="profile$ | async"></ng-blog-profile-card>
+
+  <ng-blog-profile-history
+    [posts]="posts$ | async"
+    [likedPosts]="likes$ | async"
+    (postsClicked)="onPostsClicked($event)"
+    (commentsClicked)="onCommentsClicked($event)"
+    (likesClicked)="onLikesClicked($event)"
+  ></ng-blog-profile-history>
+</div>
