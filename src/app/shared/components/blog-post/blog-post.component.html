@@ -7,10 +7,14 @@
     </div>
 
     <mat-card-header>
-      <div mat-card-avatar class="post-avatar">
+      <div
+        mat-card-avatar
+        class="post-avatar cursor-pointer"
+        (click)="goToProfile()"
+      >
         <mat-icon>account_circle</mat-icon>
       </div>
-      <mat-card-title (click)="goToProfile()">{{
+      <mat-card-title class="cursor-pointer" (click)="goToProfile()">{{
         post?.user?.fullName
       }}</mat-card-title>
       <mat-card-subtitle
@@ -26,9 +30,10 @@
     mat-card-image
     src="{{ post?.imageURL }}"
     alt="Photo of the Post"
-    class="post-image"
+    class="post-image cursor-pointer"
+    (click)="goToDetails()"
   />
-  <mat-card-content class="post-content">
+  <mat-card-content class="post-content cursor-pointer" (click)="goToDetails()">
     <p>
       {{ post?.text }}
     </p>

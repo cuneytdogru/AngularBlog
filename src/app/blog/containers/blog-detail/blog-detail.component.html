@@ -12,7 +12,12 @@
         <div class="comments-container">
           <div *ngFor="let comment of comments; trackBy: trackComment">
             <mat-divider></mat-divider>
-            <ng-blog-blog-comment [comment]="comment"> </ng-blog-blog-comment>
+            <ng-blog-blog-comment
+              [comment]="comment"
+              (profileClicked)="navigateToCommentProfile($event)"
+              (postClicked)="navigateToOriginalPost($event)"
+            >
+            </ng-blog-blog-comment>
           </div>
 
           <a

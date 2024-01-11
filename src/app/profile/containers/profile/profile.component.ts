@@ -72,12 +72,12 @@ export class ProfileComponent {
   }
 
   private async loadComments(profile: ProfileDto, filter: CommentFilter) {
-    const response = await this.profileService.getProfilePosts(
+    const response = await this.profileService.getProfileComments(
       profile.userName,
       filter
     );
 
-    this._posts.next([...this._posts.value, ...response.data]);
+    this._comments.next([...this._comments.value, ...response.data]);
   }
 
   private async loadLikes(profile: ProfileDto, filter: PostFilter) {
@@ -95,8 +95,10 @@ export class ProfileComponent {
     if (posts.length === 0) await this.loadPosts(this._profile!, filter);
   }
 
-  async onCommentsClicked(filter: PostFilter) {
-    await this.loadComments(this._profile!, filter);
+  async onCommentsClicked(filter: CommentFilter) {
+    const comments = await firstValueFrom(this.comments$);
+
+    if (comments.length === 0) await this.loadComments(this._profile!, filter);
   }
 
   async onLikesClicked(filter: PostFilter) {

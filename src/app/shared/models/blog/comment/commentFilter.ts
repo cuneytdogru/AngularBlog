@@ -9,13 +9,17 @@ export class CommentFilter implements BaseFilter {
     skip?: number,
     take?: number,
     orderBy?: string,
-    showHidden?: boolean
+    showHidden?: boolean,
+    userId?: string,
+    userName?: string
   ) {
     this.skip = skip;
     this.take = take;
     this.orderBy = orderBy;
 
     this.showHidden = showHidden;
+    this.userId = userId;
+    this.userName = userName;
   }
 
   skip?: number;
@@ -23,4 +27,6 @@ export class CommentFilter implements BaseFilter {
   orderBy?: string;
 
   showHidden?: boolean;
+  userId?: string;
+  userName?: string;
 }

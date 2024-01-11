@@ -3,6 +3,7 @@
 
   <ng-blog-profile-history
     [posts]="posts$ | async"
+    [comments]="comments$ | async"
     [likedPosts]="likes$ | async"
     (postsClicked)="onPostsClicked($event)"
     (commentsClicked)="onCommentsClicked($event)"

@@ -32,7 +32,7 @@ export class BlogPostComponent {
   @Input() set post(value: PostDto | undefined) {
     this._post = value;
 
-    this.isLiked = value?.isLikedByCurrentUser ?? false;
+    this.isLiked = value?.isLiked ?? false;
   }
 
   @Input() showBackButton: boolean = false;

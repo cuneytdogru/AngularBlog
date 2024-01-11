@@ -1,9 +1,22 @@
 <mat-card class="comment-card">
+  <a
+    class="comment-replied-to"
+    *ngIf="comment?.responseToUser"
+    (click)="goToPost()"
+  >
+    Replied to post of {{ comment?.responseToUser?.fullName }}
+  </a>
   <mat-card-header>
-    <div mat-card-avatar class="comment-avatar">
+    <div
+      mat-card-avatar
+      class="comment-avatar cursor-pointer"
+      (click)="goToProfile()"
+    >
       <mat-icon>account_circle</mat-icon>
     </div>
-    <mat-card-title>{{ comment?.user?.fullName }}</mat-card-title>
+    <mat-card-title class="cursor-pointer" (click)="goToProfile()">{{
+      comment?.user?.fullName
+    }}</mat-card-title>
     <mat-card-subtitle
       ><small>
         {{ comment?.createdDate | date : "MMM d, y, h:mm a" }}

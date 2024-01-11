@@ -1,7 +1,23 @@
+:host {
+  width: 100%;
+}
+
 .comment-card {
   margin: 0.5rem;
   border: none;
   box-shadow: none;
+
+  .comment-replied-to {
+    padding: 0.5rem;
+    margin-left: 1rem;
+    color: gray;
+    font-weight: 500;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 
   .comment-avatar {
     mat-icon {

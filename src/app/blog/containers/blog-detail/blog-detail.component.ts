@@ -77,6 +77,14 @@ export class BlogDetailComponent implements OnInit {
     this.router.navigate(['main', 'profile', post.user.userName]);
   }
 
+  navigateToCommentProfile(comment: CommentDto) {
+    this.router.navigate(['main', 'profile', comment.user.userName]);
+  }
+
+  navigateToOriginalPost(comment: CommentDto) {
+    this.router.navigate(['main', 'blog', comment.postId]);
+  }
+
   trackComment(index: number, item: CommentDto) {
     return item.id;
   }

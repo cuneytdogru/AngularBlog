@@ -5,7 +5,7 @@ import { CommentDto } from '../comment/commentDto';
 export interface PostDto extends BaseDto {
   text: string;
   imageURL: string;
-  isLikedByCurrentUser: boolean;
+  isLiked: boolean;
   totalLikes: number;
   totalComments: number;
 
