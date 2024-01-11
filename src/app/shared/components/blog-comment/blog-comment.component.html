@@ -1,24 +1,31 @@
-<div class="comments-container">
-  <div *ngFor="let comment of comments; trackBy: trackComment">
-    <mat-divider></mat-divider>
-    <mat-card class="comment-card">
-      <mat-card-header>
-        <div mat-card-avatar class="comment-avatar">
-          <mat-icon>account_circle</mat-icon>
-        </div>
-        <mat-card-title>{{ comment?.user?.fullName }}</mat-card-title>
-        <mat-card-subtitle
-          ><small>
-            {{ comment?.createdDate | date : "MMM d, y, h:mm a" }}
-          </small></mat-card-subtitle
-        >
-      </mat-card-header>
-      <mat-card-content class="post-content">
-        <p>
-          {{ comment.text }}
-        </p>
-      </mat-card-content>
-    </mat-card>
-  </div>
-  <ng-content></ng-content>
-</div>
+<mat-card class="comment-card">
+  <a
+    class="comment-replied-to"
+    *ngIf="comment?.responseToUser"
+    (click)="goToPost()"
+  >
+    Replied to post of {{ comment?.responseToUser?.fullName }}
+  </a>
+  <mat-card-header>
+    <div
+      mat-card-avatar
+      class="comment-avatar cursor-pointer"
+      (click)="goToProfile()"
+    >
+      <mat-icon>account_circle</mat-icon>
+    </div>
+    <mat-card-title class="cursor-pointer" (click)="goToProfile()">{{
+      comment?.user?.fullName
+    }}</mat-card-title>
+    <mat-card-subtitle
+      ><small>
+        {{ comment?.createdDate | date : "MMM d, y, h:mm a" }}
+      </small></mat-card-subtitle
+    >
+  </mat-card-header>
+  <mat-card-content class="post-content">
+    <p>
+      {{ comment?.text }}
+    </p>
+  </mat-card-content>
+</mat-card>

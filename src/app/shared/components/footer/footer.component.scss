@@ -1,11 +1,12 @@
 :host {
-    bottom: 0;
+  bottom: 0;
+  position: fixed;
 
-    .footer-content{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin: 1rem;
-    }
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem;
+  }
 }

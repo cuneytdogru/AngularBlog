@@ -6,4 +6,5 @@ export interface CommentDto extends BaseDto {
   postId: string;
 
   user: PublicUserDto;
+  responseToUser?: PublicUserDto;
 }

@@ -1,28 +1,36 @@
-.comments-container {
-  display: flex;
-  flex-direction: column;
+:host {
+  width: 100%;
+}
 
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+.comment-card {
+  margin: 0.5rem;
+  border: none;
+  box-shadow: none;
 
-  .comment-card {
-    margin: 0.5rem;
-    border: none;
-    box-shadow: none;
+  .comment-replied-to {
+    padding: 0.5rem;
+    margin-left: 1rem;
+    color: gray;
+    font-weight: 500;
+    cursor: pointer;
 
-    .comment-avatar {
-        mat-icon {
-          font-size: 3rem;
-          width: auto;
-          height: auto;
-  
-          color: lightgray;
-        }
-      }
-
-    .comment-content {
-      display: flex;
-      flex-direction: column;
+    &:hover {
+      text-decoration: underline;
     }
+  }
+
+  .comment-avatar {
+    mat-icon {
+      font-size: 3rem;
+      width: auto;
+      height: auto;
+
+      color: lightgray;
+    }
+  }
+
+  .comment-content {
+    display: flex;
+    flex-direction: column;
   }
 }

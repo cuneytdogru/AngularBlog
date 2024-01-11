@@ -1,25 +1,24 @@
+import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import {
   FormControl,
   FormGroup,
-  FormGroupDirective,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { RegisterForm } from '../models/registerForm';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { NgIf } from '@angular/common';
-import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { RegisterService } from '../services/register.service';
-import { RegisterDto } from 'src/app/shared/models/register/registerDto';
-import { matchValidator } from 'src/app/shared/validators/matchValidator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { NotificationService } from 'src/app/core/notification.service';
+import { RegisterDto } from 'src/app/shared/models/register/registerDto';
+import { matchValidator } from 'src/app/shared/validators/matchValidator';
+import { RegisterForm } from '../../models/registerForm';
+import { RegisterService } from '../../services/register.service';
 
 @Component({
   standalone: true,

@@ -1,29 +1,28 @@
-import { AsyncPipe, NgIf } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { MatDividerModule } from '@angular/material/divider';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  BehaviorSubject,
-  Subject,
-  catchError,
-  combineLatest,
-  map,
-  merge,
-  switchMap,
-  throwError,
-} from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { SpinnerService } from 'src/app/core/spinner.service';
+import { BlogCommentComponent } from 'src/app/shared/components/blog-comment/blog-comment.component';
 import { BlogPostComponent } from 'src/app/shared/components/blog-post/blog-post.component';
+import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
 import { PostService } from '../../services/post.service';
-import { BlogCommentComponent } from 'src/app/shared/components/blog-comment/blog-comment.component';
-import { SpinnerService } from 'src/app/core/spinner.service';
-import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
 
 @Component({
   standalone: true,
   selector: 'ng-blog-blog-detail',
   templateUrl: './blog-detail.component.html',
   styleUrls: ['./blog-detail.component.scss'],
-  imports: [BlogPostComponent, BlogCommentComponent, AsyncPipe, NgIf],
+  imports: [
+    BlogPostComponent,
+    BlogCommentComponent,
+    AsyncPipe,
+    NgIf,
+    NgFor,
+    MatDividerModule,
+  ],
 })
 export class BlogDetailComponent implements OnInit {
   private loadedComments = 0;
@@ -72,6 +71,22 @@ export class BlogDetailComponent implements OnInit {
 
   sharePost(post: PostDto) {
     //TODO: Copy link
+  }
+
+  navigateToProfile(post: PostDto) {
+    this.router.navigate(['main', 'profile', post.user.userName]);
+  }
+
+  navigateToCommentProfile(comment: CommentDto) {
+    this.router.navigate(['main', 'profile', comment.user.userName]);
+  }
+
+  navigateToOriginalPost(comment: CommentDto) {
+    this.router.navigate(['main', 'blog', comment.postId]);
+  }
+
+  trackComment(index: number, item: CommentDto) {
+    return item.id;
   }
 
   loadMoreComments(post: PostDto) {

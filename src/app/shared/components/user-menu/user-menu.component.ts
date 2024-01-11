@@ -1,20 +1,24 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { DEFAULT_USER_NAME } from '../../models/constants/default-user-name';
-import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/auth.service';
-import { JwtToken } from '../../models/auth/JwtToken';
-import { map } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   standalone: true,
   selector: 'ng-blog-user-menu',
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],
-  imports: [MatIconModule, MatDividerModule, MatButtonModule, AsyncPipe],
+  imports: [
+    MatIconModule,
+    MatDividerModule,
+    MatButtonModule,
+    AsyncPipe,
+    FooterComponent,
+  ],
 })
 export class UserMenuComponent {
   userFullName$ = this.authService.userFullName$;

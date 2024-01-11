@@ -60,7 +60,11 @@ export class BlogComponent implements AfterViewInit {
     }
   }
 
-  scrollToLastPost() {
+  ngAfterViewInit(): void {
+    this.scrollToLastPost();
+  }
+
+  private scrollToLastPost() {
     const index = this.stateService.getBlogPostIndex();
 
     if (index) {
@@ -68,16 +72,31 @@ export class BlogComponent implements AfterViewInit {
     }
   }
 
-  ngAfterViewInit(): void {
-    this.scrollToLastPost();
-  }
-
-  scrollToPost(index: number): void {
+  private scrollToPost(index: number): void {
     const lastPostElement = this.postElements?.toArray()[index].nativeElement;
 
     setTimeout(() => {
       lastPostElement.scrollIntoView({ block: 'center' });
     }, 0);
+  }
+
+  onScroll() {
+    this.page += this.size;
+    this.stateService.setBlogPage(this.page);
+
+    this.postService.getPosts({ skip: this.page, take: this.size });
+  }
+
+  onScrollUp() {
+    this.page = this.page - this.size;
+
+    if (this.page < 0)
+      if (this.page > this.size * -1) this.page = 0;
+      else return;
+
+    this.stateService.setBlogPage(this.page);
+
+    this.postService.getPosts({ skip: this.page, take: this.size }, Append.Top);
   }
 
   trackPost(index: number, item: PostDto) {
@@ -102,22 +121,9 @@ export class BlogComponent implements AfterViewInit {
     this.router.navigate(['main', 'blog', post.id]);
   }
 
-  onScroll() {
-    this.page += this.size;
+  navigateToProfile(post: PostDto, index: number) {
+    this.stateService.setBlogPostIndex(index);
     this.stateService.setBlogPage(this.page);
-
-    this.postService.getPosts({ skip: this.page, take: this.size });
-  }
-
-  onScrollUp() {
-    this.page = this.page - this.size;
-
-    if (this.page < 0)
-      if (this.page > this.size * -1) this.page = 0;
-      else return;
-
-    this.stateService.setBlogPage(this.page);
-
-    this.postService.getPosts({ skip: this.page, take: this.size }, Append.Top);
+    this.router.navigate(['main', 'profile', post.user.userName]);
   }
 }

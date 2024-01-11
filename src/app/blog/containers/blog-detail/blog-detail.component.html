@@ -4,18 +4,29 @@
       [post]="post"
       [showBackButton]="true"
       (postLiked)="likePost($event)"
-      (postUnliked)="unLikePost($event)"
+      (postUnLiked)="unLikePost($event)"
       (postShared)="sharePost($event)"
+      (profileClicked)="navigateToProfile($event)"
     >
       <ng-container *ngIf="comments$ | async as comments">
-        <ng-blog-blog-comment [comments]="comments">
+        <div class="comments-container">
+          <div *ngFor="let comment of comments; trackBy: trackComment">
+            <mat-divider></mat-divider>
+            <ng-blog-blog-comment
+              [comment]="comment"
+              (profileClicked)="navigateToCommentProfile($event)"
+              (postClicked)="navigateToOriginalPost($event)"
+            >
+            </ng-blog-blog-comment>
+          </div>
+
           <a
             *ngIf="post.totalComments > comments.length"
             class="text-muted cursor-pointer centered-content"
             (click)="loadMoreComments(post)"
             >Load more comments...</a
           >
-        </ng-blog-blog-comment>
+        </div>
       </ng-container>
     </ng-blog-blog-post>
   </div>

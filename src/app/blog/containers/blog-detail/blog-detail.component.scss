@@ -17,4 +17,16 @@
 
   overflow-y: auto;
   padding: 1rem 0;
+
+  ng-blog-blog-post {
+    width: 33%;
+  }
+
+  .comments-container {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
 }

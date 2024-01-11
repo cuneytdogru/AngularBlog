@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AboutComponent } from './about/components/about/about.component';
-import { BlogDetailComponent } from './blog/components/blog-detail/blog-detail.component';
-import { BlogComponent } from './blog/components/blog/blog.component';
-import { NotFoundComponent } from './shared/components/not-found/not-found.component';
-import { RegisterComponent } from './register/components/register.component';
+import { BlogDetailComponent } from './blog/containers/blog-detail/blog-detail.component';
+import { BlogComponent } from './blog/containers/blog/blog.component';
+import { LoginComponent } from './login/containers/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
 import { MainComponent } from './pages/main/main.component';
-import { LoginComponent } from './login/components/login.component';
+import { ProfileComponent } from './profile/containers/profile/profile.component';
+import { RegisterComponent } from './register/containers/register/register.component';
+import { NotFoundComponent } from './shared/components/not-found/not-found.component';
 import { AuthGuard } from './shared/guards/auth.guard';
 
 const routes: Routes = [
@@ -39,6 +40,10 @@ const routes: Routes = [
       {
         path: 'blog/:id',
         component: BlogDetailComponent,
+      },
+      {
+        path: 'profile/:userName',
+        component: ProfileComponent,
       },
       { path: 'about', component: AboutComponent },
       { path: '**', component: NotFoundComponent },

@@ -1,6 +1,5 @@
 import { NgStyle } from '@angular/common';
-import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FooterComponent } from 'src/app/shared/components/footer/footer.component';
 

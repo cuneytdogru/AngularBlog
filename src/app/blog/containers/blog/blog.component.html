@@ -15,9 +15,10 @@
     [post]="post"
     [showCommentPreview]="true"
     (postLiked)="likePost($event)"
-    (postUnliked)="unLikePost($event)"
+    (postUnLiked)="unLikePost($event)"
     (postShared)="sharePost($event)"
-    (goToDetails)="navigateToPost($event, i)"
+    (detailsClicked)="navigateToPost($event, i)"
+    (profileClicked)="navigateToProfile($event, i)"
   >
   </ng-blog-blog-post>
 

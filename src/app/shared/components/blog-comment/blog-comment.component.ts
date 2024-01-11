@@ -1,21 +1,34 @@
-import { Component, Input } from '@angular/core';
-import { CommentDto } from '../../models/blog/comment/commentDto';
-import { DatePipe, NgFor } from '@angular/common';
+import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
+import { CommentDto } from '../../models/blog/comment/commentDto';
 
 @Component({
   standalone: true,
   selector: 'ng-blog-blog-comment',
   templateUrl: './blog-comment.component.html',
   styleUrls: ['./blog-comment.component.scss'],
-  imports: [NgFor, MatCardModule, MatIconModule, DatePipe, MatDividerModule],
+  imports: [
+    NgFor,
+    NgIf,
+    MatCardModule,
+    MatIconModule,
+    DatePipe,
+    MatDividerModule,
+  ],
 })
 export class BlogCommentComponent {
-  @Input() comments: CommentDto[] | undefined = [];
+  @Input() comment?: CommentDto = undefined;
+  @Output() profileClicked: EventEmitter<CommentDto> = new EventEmitter();
+  @Output() postClicked: EventEmitter<CommentDto> = new EventEmitter();
 
-  trackComment(index: number, item: CommentDto) {
-    return item.id;
+  goToProfile() {
+    this.profileClicked.emit(this.comment);
+  }
+
+  goToPost() {
+    this.postClicked.emit(this.comment);
   }
 }

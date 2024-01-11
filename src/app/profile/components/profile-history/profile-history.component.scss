@@ -1,0 +1,45 @@
+:host {
+  width: 33%;
+
+  display: flex;
+  flex-direction: column;
+
+  mat-tab-body {
+    overflow: hidden;
+  }
+}
+
+.tabs-container {
+  border: none;
+  background-color: transparent;
+}
+
+.posts-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 0.5rem;
+}
+
+.comments-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 0.5rem;
+}
+
+.likes-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 0.5rem;
+}
+
+@media screen and (max-width: 959px) {
+  :host {
+    width: 100%;
+  }
+}

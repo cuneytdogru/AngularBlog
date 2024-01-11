@@ -7,10 +7,16 @@
     </div>
 
     <mat-card-header>
-      <div mat-card-avatar class="post-avatar">
+      <div
+        mat-card-avatar
+        class="post-avatar cursor-pointer"
+        (click)="goToProfile()"
+      >
         <mat-icon>account_circle</mat-icon>
       </div>
-      <mat-card-title>{{ post?.user?.fullName }}</mat-card-title>
+      <mat-card-title class="cursor-pointer" (click)="goToProfile()">{{
+        post?.user?.fullName
+      }}</mat-card-title>
       <mat-card-subtitle
         ><small>
           {{ post?.createdDate | date : "MMM d, y, h:mm a" }}
@@ -24,9 +30,10 @@
     mat-card-image
     src="{{ post?.imageURL }}"
     alt="Photo of the Post"
-    class="post-image"
+    class="post-image cursor-pointer"
+    (click)="goToDetails()"
   />
-  <mat-card-content class="post-content">
+  <mat-card-content class="post-content cursor-pointer" (click)="goToDetails()">
     <p>
       {{ post?.text }}
     </p>
@@ -54,7 +61,7 @@
         ><b>{{ post.comments[0].user.fullName }}</b>
         {{ post.comments[0].text }}</span
       >
-      <a class="text-muted cursor-pointer" (click)="showDetails()"
+      <a class="text-muted cursor-pointer" (click)="goToDetails()"
         >See all {{ post.totalComments }} comments...</a
       >
     </div>

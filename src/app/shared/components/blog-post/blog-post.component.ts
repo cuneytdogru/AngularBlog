@@ -32,16 +32,17 @@ export class BlogPostComponent {
   @Input() set post(value: PostDto | undefined) {
     this._post = value;
 
-    this.isLiked = value?.isLikedByCurrentUser ?? false;
+    this.isLiked = value?.isLiked ?? false;
   }
 
   @Input() showBackButton: boolean = false;
   @Input() showCommentPreview: boolean = false;
 
-  @Output() goToDetails: EventEmitter<PostDto> = new EventEmitter();
+  @Output() detailsClicked: EventEmitter<PostDto> = new EventEmitter();
   @Output() postLiked: EventEmitter<PostDto> = new EventEmitter();
-  @Output() postUnliked: EventEmitter<PostDto> = new EventEmitter();
+  @Output() postUnLiked: EventEmitter<PostDto> = new EventEmitter();
   @Output() postShared: EventEmitter<PostDto> = new EventEmitter();
+  @Output() profileClicked: EventEmitter<PostDto> = new EventEmitter();
 
   protected isLiked = false;
 
@@ -54,7 +55,7 @@ export class BlogPostComponent {
       this.post.totalLikes++;
     } else {
       this.isLiked = false;
-      this.postUnliked.emit(this.post);
+      this.postUnLiked.emit(this.post);
 
       if (this.post.totalLikes > 0) this.post.totalLikes--;
     }
@@ -64,11 +65,15 @@ export class BlogPostComponent {
     this.postLiked.emit(this.post);
   }
 
-  showDetails() {
-    this.goToDetails.emit(this.post);
+  goToDetails() {
+    this.detailsClicked.emit(this.post);
   }
 
   goBack() {
     window.history.back();
+  }
+
+  goToProfile() {
+    this.profileClicked.emit(this.post);
   }
 }
