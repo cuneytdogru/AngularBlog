@@ -94,7 +94,8 @@ export class RegisterComponent {
 
   async register() {
     const registerDto = this.registerForm.value as RegisterDto;
-    const user = await this.registerService.registerUser(registerDto);
+
+    await this.registerService.registerUser(registerDto);
 
     this.notificationService.showSuccess('User registered.');
 

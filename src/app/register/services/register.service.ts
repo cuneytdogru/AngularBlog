@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { ApiResponse } from 'src/app/shared/models/api/apiResponse';
+import { ApiResponseNoContent } from 'src/app/shared/models/api/apiResponse';
 import { BASE_PATH } from 'src/app/shared/models/constants/base-path';
 import { RegisterDto } from 'src/app/shared/models/register/registerDto';
-import { UserDto } from 'src/app/shared/models/register/userDto';
 
 @Injectable({
   providedIn: 'root',
@@ -20,9 +19,9 @@ export class RegisterService {
     this.apiPath = basePath;
   }
 
-  async registerUser(registerDto: RegisterDto): Promise<ApiResponse<UserDto>> {
+  async registerUser(registerDto: RegisterDto): Promise<ApiResponseNoContent> {
     const response = await firstValueFrom(
-      this.httpClient.post<ApiResponse<UserDto>>(
+      this.httpClient.post<ApiResponseNoContent>(
         `${this.apiPath}/${this.endpoint}`,
         registerDto
       )
