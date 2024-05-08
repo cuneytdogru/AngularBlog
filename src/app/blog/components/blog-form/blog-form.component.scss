@@ -1,0 +1,52 @@
+:host {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+mat-card-content.blog-form-container {
+  display: flex;
+  flex-direction: row;
+
+  padding: 1rem;
+  gap: 1rem;
+
+  .profile-avatar {
+    width: 50px;
+
+    mat-icon {
+      width: 3rem;
+      height: 3rem;
+      font-size: 3rem;
+    }
+  }
+
+  .blog-form-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+
+    form {
+      display: flex;
+      flex-direction: column;
+
+      gap: 0.5rem;
+
+      div.textarea {
+        line-height: 3rem;
+        border: none;
+        outline: none;
+      }
+    }
+
+    .blog-form-actions {
+      display: flex;
+      flex-direction: row;
+
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+}

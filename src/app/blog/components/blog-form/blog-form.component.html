@@ -1,0 +1,54 @@
+<mat-card appearance="outlined">
+  <mat-progress-bar
+    *ngIf="isLoading$ | async"
+    mode="indeterminate"
+  ></mat-progress-bar>
+  <mat-card-header>
+    <mat-card-title>New Post</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="blog-form-container">
+    <div class="profile-avatar">
+      <mat-icon>account_circle</mat-icon>
+    </div>
+    <div class="blog-form-content">
+      <form [formGroup]="blogForm">
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Leave a comment</mat-label>
+          <textarea
+            matInput
+            placeholder="Ex. It makes me feel..."
+            formControlName="text"
+            cdkTextareaAutosize
+          ></textarea>
+        </mat-form-field>
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Add an image link</mat-label>
+          <input
+            matInput
+            formControlName="imageURL"
+            placeholder="Ex. https://image.com/perfect-view.jpg"
+          />
+        </mat-form-field>
+      </form>
+      <div class="blog-form-actions">
+        <div>
+          <button mat-icon-button color="primary">
+            <mat-icon fontSet="material-icons-outlined">image</mat-icon>
+          </button>
+
+          <button mat-icon-button color="primary">
+            <mat-icon fontSet="material-icons-outlined">gif_box</mat-icon>
+          </button>
+        </div>
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="blogForm.invalid || (isLoading$ | async)"
+          (click)="onSubmit()"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

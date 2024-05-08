@@ -9,6 +9,8 @@
   (scrolledUp)="onScrollUp()"
   [scrollWindow]="false"
 >
+  <ng-blog-blog-form (submit)="createPost($event)"></ng-blog-blog-form>
+
   <ng-blog-blog-post
     #posts
     *ngFor="let post of posts$ | async; trackBy: trackPost; let i = index"
