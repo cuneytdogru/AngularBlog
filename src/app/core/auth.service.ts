@@ -1,16 +1,15 @@
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpResponse,
-} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import jwt_decode from 'jwt-decode';
 import { BehaviorSubject, firstValueFrom, map, tap } from 'rxjs';
-import { ApiResponse } from 'src/app/shared/models/api/apiResponse';
+import {
+  ApiResponse,
+  ApiResponseNoContent,
+} from 'src/app/shared/models/api/apiResponse';
 import { BASE_PATH } from 'src/app/shared/models/constants/base-path';
+import { JwtToken } from '../shared/models/auth/JwtToken';
 import { LoginRequestDto } from '../shared/models/auth/loginRequestDto';
 import { LoginResponseDto } from '../shared/models/auth/loginResponseDto';
-import jwt_decode from 'jwt-decode';
-import { JwtToken } from '../shared/models/auth/JwtToken';
 import { DEFAULT_USER_NAME } from '../shared/models/constants/default-user-name';
 
 @Injectable({
@@ -77,10 +76,10 @@ export class AuthService {
     return response;
   }
 
-  async logout(): Promise<ApiResponse<string>> {
+  async logout(): Promise<ApiResponseNoContent> {
     try {
       const response = await firstValueFrom(
-        this.httpClient.post<ApiResponse<string>>(
+        this.httpClient.post<ApiResponseNoContent>(
           `${this.apiPath}/${this.endpoint}/logout`,
           undefined
         )

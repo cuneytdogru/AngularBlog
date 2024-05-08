@@ -1,11 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { ApiResponse } from 'src/app/shared/models/api/apiResponse';
+import { AuthService } from 'src/app/core/auth.service';
+import {
+  ApiResponse,
+  ApiResponseNoContent,
+} from 'src/app/shared/models/api/apiResponse';
 import { BaseDto } from 'src/app/shared/models/api/baseDto';
 import { PagedResponse } from 'src/app/shared/models/api/pagedResponse';
 import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
 import { CommentFilter } from 'src/app/shared/models/blog/comment/commentFilter';
+import { CreatePostDto } from 'src/app/shared/models/blog/post/createPostDto';
 import { LikePostDto } from 'src/app/shared/models/blog/post/likePostDto';
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
 import { PostFilter } from 'src/app/shared/models/blog/post/postFilter';
@@ -19,14 +24,25 @@ export class PostService {
   private readonly apiPath: string = 'https://localhost';
   private readonly endpoint: string = 'post';
 
-  _posts = new BehaviorSubject<PostDto[]>([]);
+  private _posts = new BehaviorSubject<PostDto[]>([]);
   posts$ = this._posts.asObservable();
 
   constructor(
     private httpClient: HttpClient,
-    @Inject(BASE_PATH) basePath: string
+    @Inject(BASE_PATH) basePath: string,
+    private authService: AuthService
   ) {
     this.apiPath = basePath;
+    this.authService.isAuthenticated$.subscribe((authenticated) => {
+      if (!authenticated) {
+        this.clear();
+      }
+    });
+  }
+
+  private clear() {
+    this.isInitialized = false;
+    this._posts.next([]);
   }
 
   isInitialized = false;
@@ -80,11 +96,33 @@ export class PostService {
     return response;
   }
 
+  async getPostFromLocation(location: string) {
+    const response = await firstValueFrom(
+      this.httpClient.get<ApiResponse<PostDto>>(location)
+    );
+
+    this.appendPost(response!.result!);
+
+    return response;
+  }
+
+  async createPost(postDto: CreatePostDto): Promise<string | null> {
+    const response = await firstValueFrom(
+      this.httpClient.post<ApiResponseNoContent>(
+        `${this.apiPath}/${this.endpoint}`,
+        postDto,
+        { observe: 'response' }
+      )
+    );
+
+    return response.headers.get('location');
+  }
+
   async likePost(post: PostDto, isLiked: boolean = true) {
     const likePostDto = { isLiked: isLiked } as LikePostDto;
 
     const response = await firstValueFrom(
-      this.httpClient.put<ApiResponse<PostDto>>(
+      this.httpClient.put<ApiResponseNoContent>(
         `${this.apiPath}/${this.endpoint}/${encodeURIComponent(
           String(post.id)
         )}/like`,
@@ -92,7 +130,9 @@ export class PostService {
       )
     );
 
-    this.appendPost(response!.result!);
+    post.isLiked = isLiked;
+
+    this.appendPost(post);
 
     return response;
   }
@@ -138,10 +178,11 @@ export class PostService {
     return response;
   }
 
-  appendPost(data: PostDto) {
+  private appendPost(data: PostDto) {
     this.appendPosts([data], Append.Bottom);
   }
-  appendPosts(data: PostDto[], append = Append.Bottom) {
+
+  private appendPosts(data: PostDto[], append = Append.Bottom) {
     let values = [];
     if (append === Append.Top)
       values = this.unique([...data, ...this._posts.value]);

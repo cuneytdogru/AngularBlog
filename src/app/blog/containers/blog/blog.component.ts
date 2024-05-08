@@ -9,12 +9,15 @@ import {
 import { Router } from '@angular/router';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { Subject } from 'rxjs';
+import { NotificationService } from 'src/app/core/notification.service';
 import { SpinnerService } from 'src/app/core/spinner.service';
 import { StateService } from 'src/app/core/state.service';
 import { BlogPostSkeletonComponent } from 'src/app/shared/components/blog-post-skeleton/blog-post-skeleton.component';
 import { BlogPostComponent } from 'src/app/shared/components/blog-post/blog-post.component';
+import { CreatePostDto } from 'src/app/shared/models/blog/post/createPostDto';
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
 import { DEFAULT_TAKE } from 'src/app/shared/models/constants/filter';
+import { BlogFormComponent } from '../../components/blog-form/blog-form.component';
 import { Append } from '../../models/append.enum';
 import { PostService } from '../../services/post.service';
 
@@ -28,6 +31,7 @@ import { PostService } from '../../services/post.service';
     NgFor,
     AsyncPipe,
     BlogPostComponent,
+    BlogFormComponent,
     InfiniteScrollModule,
     BlogPostSkeletonComponent,
   ],
@@ -49,7 +53,8 @@ export class BlogComponent implements AfterViewInit {
     private postService: PostService,
     private router: Router,
     private spinnerService: SpinnerService,
-    private stateService: StateService
+    private stateService: StateService,
+    private notificationService: NotificationService
   ) {
     if (!postService.isInitialized) {
       this.stateService.clearBlogPostIndex();
@@ -125,5 +130,17 @@ export class BlogComponent implements AfterViewInit {
     this.stateService.setBlogPostIndex(index);
     this.stateService.setBlogPage(this.page);
     this.router.navigate(['main', 'profile', post.user.userName]);
+  }
+
+  async createPost(post: CreatePostDto) {
+    const resourcePath = await this.postService.createPost(post);
+
+    const createdPost = await this.postService.getPostFromLocation(
+      resourcePath!
+    );
+
+    this.router.navigate(['main', 'blog', createdPost.result?.id]);
+
+    this.notificationService.showSuccess('Post created.');
   }
 }
