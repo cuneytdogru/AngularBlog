@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { AuthService } from 'src/app/core/auth.service';
 import {
   ApiResponse,
   ApiResponseNoContent,
@@ -28,9 +29,20 @@ export class PostService {
 
   constructor(
     private httpClient: HttpClient,
-    @Inject(BASE_PATH) basePath: string
+    @Inject(BASE_PATH) basePath: string,
+    private authService: AuthService
   ) {
     this.apiPath = basePath;
+    this.authService.isAuthenticated$.subscribe((authenticated) => {
+      if (!authenticated) {
+        this.clear();
+      }
+    });
+  }
+
+  private clear() {
+    this.isInitialized = false;
+    this._posts.next([]);
   }
 
   isInitialized = false;
