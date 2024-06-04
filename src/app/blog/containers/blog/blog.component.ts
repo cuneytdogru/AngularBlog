@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { Subject } from 'rxjs';
+import { Subject, switchMap } from 'rxjs';
 import { NotificationService } from 'src/app/core/notification.service';
 import { SpinnerService } from 'src/app/core/spinner.service';
 import { StateService } from 'src/app/core/state.service';
@@ -43,7 +43,6 @@ export class BlogComponent implements AfterViewInit {
   size = DEFAULT_TAKE;
 
   destroying$ = new Subject<boolean>();
-  posts$ = this.postService.posts$;
   isLoading$ = this.spinnerService.visibility$;
 
   @ViewChildren('posts', { read: ElementRef })
@@ -55,33 +54,40 @@ export class BlogComponent implements AfterViewInit {
     private spinnerService: SpinnerService,
     private stateService: StateService,
     private notificationService: NotificationService
-  ) {
-    if (!postService.isInitialized) {
-      this.stateService.clearBlogPostIndex();
-      this.postService.getPosts({ skip: this.page, take: this.size });
-    } else {
-      if (this.stateService.getBlogPage())
+  ) {}
+
+  posts$ = this.postService.posts$.pipe(
+    switchMap((posts) => {
+      if (posts.length < DEFAULT_TAKE) {
+        this.page = 0;
+        this.stateService.setBlogPage(this.page);
+        this.postService.getPosts({ skip: this.page, take: this.size });
+      } else {
         this.page = this.stateService.getBlogPage();
-    }
-  }
+      }
+
+      return this.postService.posts$;
+    })
+  );
 
   ngAfterViewInit(): void {
     this.scrollToLastPost();
   }
 
   private scrollToLastPost() {
-    const index = this.stateService.getBlogPostIndex();
+    const index = this.stateService.getLastBlogPostIndex();
 
     if (index) {
       this.scrollToPost(index);
+      this.stateService.setLastBlogPostIndex(0);
     }
   }
 
   private scrollToPost(index: number): void {
-    const lastPostElement = this.postElements?.toArray()[index].nativeElement;
+    const lastPostElement = this.postElements?.toArray()[index]?.nativeElement;
 
     setTimeout(() => {
-      lastPostElement.scrollIntoView({ block: 'center' });
+      lastPostElement?.scrollIntoView({ block: 'center' });
     }, 0);
   }
 
@@ -121,13 +127,13 @@ export class BlogComponent implements AfterViewInit {
   }
 
   navigateToPost(post: PostDto, index: number) {
-    this.stateService.setBlogPostIndex(index);
+    this.stateService.setLastBlogPostIndex(index);
     this.stateService.setBlogPage(this.page);
     this.router.navigate(['main', 'blog', post.id]);
   }
 
   navigateToProfile(post: PostDto, index: number) {
-    this.stateService.setBlogPostIndex(index);
+    this.stateService.setLastBlogPostIndex(index);
     this.stateService.setBlogPage(this.page);
     this.router.navigate(['main', 'profile', post.user.userName]);
   }
@@ -142,5 +148,11 @@ export class BlogComponent implements AfterViewInit {
     this.router.navigate(['main', 'blog', createdPost.result?.id]);
 
     this.notificationService.showSuccess('Post created.');
+  }
+
+  async deletePost(post: PostDto) {
+    await this.postService.deletePost(post.id);
+
+    this.notificationService.showSuccess('Post deleted.');
   }
 }

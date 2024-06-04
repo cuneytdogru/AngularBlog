@@ -7,19 +7,19 @@ import { SessionState } from './models/session-state.model';
   providedIn: 'root',
 })
 export class StateService {
-  private initApplicationState = {
-    blogPage: 0,
-    blogScroll: 0,
-  } as ApplicationState;
+  private initApplicationState: ApplicationState = {
+    token: undefined,
+  };
 
-  private initSessionState = {
+  private initSessionState: SessionState = {
     blogPage: 0,
-  } as SessionState;
+    lastBlogPostIndex: 0,
+  };
 
-  private _localState = new BehaviorSubject<ApplicationState>(
+  private _applicationState = new BehaviorSubject<ApplicationState>(
     this.initApplicationState
   );
-  localState$ = this._localState.asObservable();
+  applicationState$ = this._applicationState.asObservable();
 
   private _sessionState = new BehaviorSubject<SessionState>(
     this.initSessionState
@@ -31,9 +31,11 @@ export class StateService {
     const sessionState = sessionStorage.getItem('state');
 
     if (applicationState) {
-      this._localState.next(JSON.parse(applicationState) as ApplicationState);
+      this._applicationState.next(
+        JSON.parse(applicationState) as ApplicationState
+      );
     } else {
-      this._localState.next(this.initApplicationState);
+      this._applicationState.next(this.initApplicationState);
     }
 
     if (sessionState) {
@@ -42,7 +44,7 @@ export class StateService {
       this._sessionState.next(this.initSessionState);
     }
 
-    this.localState$.subscribe((state) => {
+    this.applicationState$.subscribe((state) => {
       localStorage.setItem('state', JSON.stringify(state));
     });
 
@@ -59,21 +61,29 @@ export class StateService {
     this._sessionState.next({ ...this._sessionState.value, blogPage: page });
   }
 
-  getBlogPostIndex(): number {
-    return this._sessionState.value.blogPostIndex;
+  getLastBlogPostIndex(): number {
+    return this._sessionState.value.lastBlogPostIndex;
   }
 
-  setBlogPostIndex(index: number) {
+  setLastBlogPostIndex(index?: number) {
     this._sessionState.next({
       ...this._sessionState.value,
-      blogPostIndex: index,
+      lastBlogPostIndex: index ?? 0,
     });
   }
 
-  clearBlogPostIndex() {
-    this._sessionState.next({
-      ...this._sessionState.value,
-      blogPostIndex: 0,
+  clearSessionState() {
+    this._sessionState.next(this.initSessionState);
+  }
+
+  getToken(): string | undefined {
+    return this._applicationState.value.token;
+  }
+
+  setToken(value?: string) {
+    this._applicationState.next({
+      ...this._applicationState.value,
+      token: value,
     });
   }
 }

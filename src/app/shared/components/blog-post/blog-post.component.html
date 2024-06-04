@@ -1,7 +1,7 @@
 <mat-card class="blog-post-card">
   <div class="blog-post-card-header">
-    <div class="post-back-container">
-      <button *ngIf="showBackButton" mat-icon-button (click)="goBack()">
+    <div *ngIf="showBackButton" class="post-back-container">
+      <button mat-icon-button (click)="goBack()">
         <mat-icon>arrow_back</mat-icon>
       </button>
     </div>
@@ -23,6 +23,10 @@
         </small></mat-card-subtitle
       >
     </mat-card-header>
+
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Post menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
   </div>
   <mat-divider></mat-divider>
   <img
@@ -68,3 +72,17 @@
     <ng-content></ng-content>
   </mat-card-footer>
 </mat-card>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>
+    <mat-icon>flag</mat-icon>
+    <span>Report</span>
+  </button>
+  <ng-container *ifOwner="post?.user?.id">
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="delete()">
+      <mat-icon color="warn">delete</mat-icon>
+      <span>Delete</span>
+    </button>
+  </ng-container>
+</mat-menu>
