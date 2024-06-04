@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { AuthService } from 'src/app/core/auth.service';
+import { firstValueFrom } from 'rxjs';
+import { StoreKeys } from 'src/app/core/models/store.model';
+import { StoreService } from 'src/app/core/store.service';
 import {
   ApiResponse,
   ApiResponseNoContent,
@@ -24,28 +25,15 @@ export class PostService {
   private readonly apiPath: string = 'https://localhost';
   private readonly endpoint: string = 'post';
 
-  private _posts = new BehaviorSubject<PostDto[]>([]);
-  posts$ = this._posts.asObservable();
-
   constructor(
     private httpClient: HttpClient,
     @Inject(BASE_PATH) basePath: string,
-    private authService: AuthService
+    private storeService: StoreService
   ) {
     this.apiPath = basePath;
-    this.authService.isAuthenticated$.subscribe((authenticated) => {
-      if (!authenticated) {
-        this.clear();
-      }
-    });
   }
 
-  private clear() {
-    this.isInitialized = false;
-    this._posts.next([]);
-  }
-
-  isInitialized = false;
+  posts$ = this.storeService.select<PostDto[]>(StoreKeys.Posts);
 
   async getPosts(filter: PostFilter, append = Append.Bottom) {
     let localVarQueryParameters = new HttpParams({});
@@ -78,7 +66,6 @@ export class PostService {
       )
     );
 
-    this.isInitialized = true;
     this.appendPosts(response!.result!.data);
 
     return response;
@@ -137,6 +124,18 @@ export class PostService {
     return response;
   }
 
+  async deletePost(id: string) {
+    const response = await firstValueFrom(
+      this.httpClient.delete<ApiResponseNoContent>(
+        `${this.apiPath}/${this.endpoint}/${encodeURIComponent(String(id))}`
+      )
+    );
+
+    this.removePost(id);
+
+    return response;
+  }
+
   async getComments(postId: string, filter: CommentFilter) {
     let localVarQueryParameters = new HttpParams({});
 
@@ -182,13 +181,20 @@ export class PostService {
     this.appendPosts([data], Append.Bottom);
   }
 
+  private removePost(id: string) {
+    this.storeService.set(
+      StoreKeys.Posts,
+      this.storeService.value.posts.filter((x) => x.id != id)
+    );
+  }
+
   private appendPosts(data: PostDto[], append = Append.Bottom) {
     let values = [];
     if (append === Append.Top)
-      values = this.unique([...data, ...this._posts.value]);
-    else values = this.unique([...this._posts.value, ...data]);
+      values = this.unique([...data, ...this.storeService.value.posts]);
+    else values = this.unique([...this.storeService.value.posts, ...data]);
 
-    this._posts.next(this.sort(values));
+    this.storeService.set(StoreKeys.Posts, this.sort(values));
   }
 
   private unique<T extends BaseDto>(data: T[]): T[] {

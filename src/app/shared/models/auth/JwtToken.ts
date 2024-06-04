@@ -5,4 +5,5 @@ export interface JwtToken {
   email: string;
   nbf: string;
   exp: string;
+  sid: string;
 }

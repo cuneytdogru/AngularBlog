@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import jwt_decode from 'jwt-decode';
-import { BehaviorSubject, firstValueFrom, map, tap } from 'rxjs';
+import { filter, firstValueFrom, map } from 'rxjs';
 import {
   ApiResponse,
   ApiResponseNoContent,
@@ -10,7 +10,9 @@ import { BASE_PATH } from 'src/app/shared/models/constants/base-path';
 import { JwtToken } from '../shared/models/auth/JwtToken';
 import { LoginRequestDto } from '../shared/models/auth/loginRequestDto';
 import { LoginResponseDto } from '../shared/models/auth/loginResponseDto';
-import { DEFAULT_USER_NAME } from '../shared/models/constants/default-user-name';
+import { StoreKeys } from './models/store.model';
+import { StateService } from './state.service';
+import { StoreService } from './store.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,46 +20,41 @@ import { DEFAULT_USER_NAME } from '../shared/models/constants/default-user-name'
 export class AuthService {
   private readonly apiPath: string = 'https://localhost';
   private readonly endpoint: string = 'auth';
-  private readonly localStorage_Token: string = 'token';
 
-  private _token = new BehaviorSubject<string>('');
-  token$ = this._token
-    .asObservable()
-    .pipe(
-      tap((token) =>
-        token
-          ? localStorage.setItem(this.localStorage_Token, token)
-          : localStorage.removeItem(this.localStorage_Token)
-      )
-    );
+  token$ = this.stateService.applicationState$.pipe(map((x) => x.token));
 
   jwtToken$ = this.token$.pipe(
     map((response) => {
-      if (!response) return {} as JwtToken;
+      if (!response) return undefined;
       else return jwt_decode<JwtToken>(response);
     })
-  );
-
-  userFullName$ = this.jwtToken$.pipe(
-    map((token: JwtToken) => token.name ?? DEFAULT_USER_NAME)
   );
 
   isAuthenticated$ = this.jwtToken$.pipe(
     map((token) => token && new Date(token.exp) <= new Date())
   );
 
+  userFullName$ = this.jwtToken$.pipe(
+    filter(Boolean),
+    map((token: JwtToken) => token.name)
+  );
+
+  userId$ = this.jwtToken$.pipe(
+    filter(Boolean),
+    map((token: JwtToken) => token.sid)
+  );
+
   constructor(
     private httpClient: HttpClient,
-    @Inject(BASE_PATH) basePath: string
+    @Inject(BASE_PATH) basePath: string,
+    private stateService: StateService,
+    private storeService: StoreService
   ) {
     this.apiPath = basePath;
-
-    const storedToken = localStorage.getItem(this.localStorage_Token);
-    if (storedToken) this._token.next(storedToken);
   }
 
   getToken() {
-    return this._token.value;
+    return this.stateService.getToken();
   }
 
   async login(
@@ -71,7 +68,10 @@ export class AuthService {
     );
 
     const token = response.result?.token;
-    if (token) this._token.next(token);
+    if (token) {
+      this.clearSessionStatesAndStore();
+      this.stateService.setToken(token);
+    }
 
     return response;
   }
@@ -87,7 +87,13 @@ export class AuthService {
 
       return response;
     } finally {
-      this._token.next('');
+      this.stateService.setToken(undefined);
+      this.clearSessionStatesAndStore();
     }
+  }
+
+  private clearSessionStatesAndStore() {
+    this.stateService.clearSessionState();
+    this.storeService.set(StoreKeys.Posts, []);
   }
 }

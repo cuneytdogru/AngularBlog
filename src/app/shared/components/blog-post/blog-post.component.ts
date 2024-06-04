@@ -4,6 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { IfOwnerDirective } from '../../directives/ifOwner.directive';
 import { PostDto } from '../../models/blog/post/postDto';
 import { BlogCommentComponent } from '../blog-comment/blog-comment.component';
 
@@ -20,6 +22,8 @@ import { BlogCommentComponent } from '../blog-comment/blog-comment.component';
     MatIconModule,
     DatePipe,
     BlogCommentComponent,
+    MatMenuModule,
+    IfOwnerDirective,
   ],
 })
 export class BlogPostComponent {
@@ -43,6 +47,7 @@ export class BlogPostComponent {
   @Output() postUnLiked: EventEmitter<PostDto> = new EventEmitter();
   @Output() postShared: EventEmitter<PostDto> = new EventEmitter();
   @Output() profileClicked: EventEmitter<PostDto> = new EventEmitter();
+  @Output() deleteClicked: EventEmitter<PostDto> = new EventEmitter();
 
   protected isLiked = false;
 
@@ -75,5 +80,9 @@ export class BlogPostComponent {
 
   goToProfile() {
     this.profileClicked.emit(this.post);
+  }
+
+  delete() {
+    this.deleteClicked.emit(this.post);
   }
 }

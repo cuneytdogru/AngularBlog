@@ -17,16 +17,20 @@
       padding-left: 8px;
     }
 
-    .post-avatar {
-      width: 3rem;
-      height: 3rem;
+    mat-card-header {
+      width: 100%;
 
-      mat-icon {
-        font-size: 3rem;
-        width: auto;
-        height: auto;
+      .post-avatar {
+        width: 3rem;
+        height: 3rem;
 
-        color: lightgray;
+        mat-icon {
+          font-size: 3rem;
+          width: auto;
+          height: auto;
+
+          color: lightgray;
+        }
       }
     }
   }

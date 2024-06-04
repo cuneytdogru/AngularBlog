@@ -1,3 +1,3 @@
 export interface ApplicationState {
-  blogPage: number;
+  token?: string;
 }

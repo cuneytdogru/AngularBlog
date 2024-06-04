@@ -1,4 +1,4 @@
 export interface SessionState {
   blogPage: number;
-  blogPostIndex: number;
+  lastBlogPostIndex: number;
 }
