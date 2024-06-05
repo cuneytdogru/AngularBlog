@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { StoreKeys } from 'src/app/core/models/store.model';
 import { StoreService } from 'src/app/core/store.service';
+import { UserService } from 'src/app/core/user.service';
 import {
   ApiResponse,
   ApiResponseNoContent,
@@ -11,6 +12,7 @@ import { BaseDto } from 'src/app/shared/models/api/baseDto';
 import { PagedResponse } from 'src/app/shared/models/api/pagedResponse';
 import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
 import { CommentFilter } from 'src/app/shared/models/blog/comment/commentFilter';
+import { CreateCommentDto } from 'src/app/shared/models/blog/comment/createCommentDto';
 import { CreatePostDto } from 'src/app/shared/models/blog/post/createPostDto';
 import { LikePostDto } from 'src/app/shared/models/blog/post/likePostDto';
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
@@ -28,7 +30,8 @@ export class PostService {
   constructor(
     private httpClient: HttpClient,
     @Inject(BASE_PATH) basePath: string,
-    private storeService: StoreService
+    private storeService: StoreService,
+    private userService: UserService
   ) {
     this.apiPath = basePath;
   }
@@ -93,6 +96,16 @@ export class PostService {
     return response;
   }
 
+  async getCommentFromLocation(location: string) {
+    const response = await firstValueFrom(
+      this.httpClient.get<ApiResponse<CommentDto>>(location)
+    );
+
+    this.appendComment(response!.result!.postId, response!.result!);
+
+    return response;
+  }
+
   async createPost(postDto: CreatePostDto): Promise<string | null> {
     const response = await firstValueFrom(
       this.httpClient.post<ApiResponseNoContent>(
@@ -136,6 +149,20 @@ export class PostService {
     return response;
   }
 
+  async addComment(postId: string, comment: CreateCommentDto) {
+    const response = await firstValueFrom(
+      this.httpClient.post<ApiResponseNoContent>(
+        `${this.apiPath}/${this.endpoint}/${encodeURIComponent(
+          String(postId)
+        )}/comments`,
+        comment,
+        { observe: 'response' }
+      )
+    );
+
+    return response.headers.get('location');
+  }
+
   async getComments(postId: string, filter: CommentFilter) {
     let localVarQueryParameters = new HttpParams({});
 
@@ -174,11 +201,40 @@ export class PostService {
       })
     );
 
+    this.appendComments(postId, response!.result!.data);
+
     return response;
+  }
+
+  private appendComment(postId: string, comment: CommentDto) {
+    this.appendComments(postId, [comment]);
+  }
+
+  private async appendComments(postId: string, comments: CommentDto[]) {
+    this.storeService.set(
+      StoreKeys.Posts,
+      this.storeService.value.posts.map((post) => {
+        if (post.id != postId) {
+          return post;
+        } else {
+          const values = this.unique([...comments, ...post.comments]);
+
+          post.comments = this.sort(values);
+
+          return post;
+        }
+      })
+    );
   }
 
   private appendPost(data: PostDto) {
     this.appendPosts([data], Append.Bottom);
+  }
+
+  private appendPosts(data: PostDto[], append = Append.Bottom) {
+    const values = this.unique([...data, ...this.storeService.value.posts]);
+
+    this.storeService.set(StoreKeys.Posts, this.sort(values));
   }
 
   private removePost(id: string) {
@@ -186,15 +242,6 @@ export class PostService {
       StoreKeys.Posts,
       this.storeService.value.posts.filter((x) => x.id != id)
     );
-  }
-
-  private appendPosts(data: PostDto[], append = Append.Bottom) {
-    let values = [];
-    if (append === Append.Top)
-      values = this.unique([...data, ...this.storeService.value.posts]);
-    else values = this.unique([...this.storeService.value.posts, ...data]);
-
-    this.storeService.set(StoreKeys.Posts, this.sort(values));
   }
 
   private unique<T extends BaseDto>(data: T[]): T[] {

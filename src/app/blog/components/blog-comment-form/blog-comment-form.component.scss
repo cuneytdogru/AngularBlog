@@ -1,0 +1,10 @@
+:host ::ng-deep .comment-form {
+  mat-form-field {
+    width: 100%;
+  }
+
+  .mdc-text-field {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+}

@@ -91,23 +91,22 @@ export class BlogComponent implements AfterViewInit {
     }, 0);
   }
 
-  onScroll() {
+  async onScroll() {
     this.page += this.size;
     this.stateService.setBlogPage(this.page);
 
-    this.postService.getPosts({ skip: this.page, take: this.size });
+    try {
+      await this.postService.getPosts({ skip: this.page, take: this.size });
+    } catch {
+      this.page -= this.size;
+    }
   }
 
-  onScrollUp() {
-    this.page = this.page - this.size;
-
-    if (this.page < 0)
-      if (this.page > this.size * -1) this.page = 0;
-      else return;
-
-    this.stateService.setBlogPage(this.page);
-
-    this.postService.getPosts({ skip: this.page, take: this.size }, Append.Top);
+  async onScrollUp() {
+    await this.postService.getPosts(
+      { skip: 0, take: DEFAULT_TAKE },
+      Append.Top
+    );
   }
 
   trackPost(index: number, item: PostDto) {

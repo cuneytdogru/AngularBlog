@@ -6,7 +6,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { AuthService } from 'src/app/core/auth.service';
+import { UserService } from 'src/app/core/user.service';
 
 @Directive({
   selector: '[ifOwner]',
@@ -18,13 +18,13 @@ export class IfOwnerDirective implements OnInit {
   constructor(
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef,
-    private authService: AuthService
+    private userService: UserService
   ) {}
 
   async ngOnInit() {
-    const currentUserId = await firstValueFrom(this.authService.userId$);
+    const user = await firstValueFrom(this.userService.user$);
 
-    if (currentUserId == this.ifOwner) {
+    if (user.id == this.ifOwner) {
       this.viewContainer.createEmbeddedView(this.templateRef);
     } else {
       this.viewContainer.clear();

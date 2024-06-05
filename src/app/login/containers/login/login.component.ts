@@ -16,9 +16,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/core/auth.service';
 import { NotificationService } from 'src/app/core/notification.service';
 import { SpinnerService } from 'src/app/core/spinner.service';
+import { UserService } from 'src/app/core/user.service';
 import { LoginRequestDto } from 'src/app/shared/models/auth/loginRequestDto';
 import { LoginForm } from '../../models/loginForm';
 
@@ -45,7 +45,7 @@ import { LoginForm } from '../../models/loginForm';
 export class LoginComponent {
   constructor(
     private router: Router,
-    private authService: AuthService,
+    private userService: UserService,
     private notificationService: NotificationService,
     private spinnerService: SpinnerService
   ) {}
@@ -76,7 +76,7 @@ export class LoginComponent {
     try {
       const loginRequest = this.loginForm.value as LoginRequestDto;
 
-      await this.authService.login(loginRequest);
+      await this.userService.login(loginRequest);
 
       this.notificationService.dismiss();
       this.router.navigate(['main']);

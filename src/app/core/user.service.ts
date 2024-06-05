@@ -10,6 +10,7 @@ import { BASE_PATH } from 'src/app/shared/models/constants/base-path';
 import { JwtToken } from '../shared/models/auth/JwtToken';
 import { LoginRequestDto } from '../shared/models/auth/loginRequestDto';
 import { LoginResponseDto } from '../shared/models/auth/loginResponseDto';
+import { User } from '../shared/models/auth/user';
 import { StoreKeys } from './models/store.model';
 import { StateService } from './state.service';
 import { StoreService } from './store.service';
@@ -17,7 +18,7 @@ import { StoreService } from './store.service';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class UserService {
   private readonly apiPath: string = 'https://localhost';
   private readonly endpoint: string = 'auth';
 
@@ -34,14 +35,16 @@ export class AuthService {
     map((token) => token && new Date(token.exp) <= new Date())
   );
 
-  userFullName$ = this.jwtToken$.pipe(
+  user$ = this.jwtToken$.pipe(
     filter(Boolean),
-    map((token: JwtToken) => token.name)
-  );
-
-  userId$ = this.jwtToken$.pipe(
-    filter(Boolean),
-    map((token: JwtToken) => token.sid)
+    map((token: JwtToken) => {
+      return {
+        email: token.email,
+        fullName: token.name,
+        userName: token.sub,
+        id: token.sid,
+      } as User;
+    })
   );
 
   constructor(
