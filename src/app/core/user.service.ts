@@ -11,9 +11,9 @@ import { JwtToken } from '../shared/models/auth/JwtToken';
 import { LoginRequestDto } from '../shared/models/auth/loginRequestDto';
 import { LoginResponseDto } from '../shared/models/auth/loginResponseDto';
 import { User } from '../shared/models/auth/user';
-import { StoreKeys } from './models/store.model';
+import { STORE_KEYS } from './models/angular-blog-store-state.model';
 import { StateService } from './state.service';
-import { StoreService } from './store.service';
+import { Store } from './store/store';
 
 @Injectable({
   providedIn: 'root',
@@ -51,7 +51,7 @@ export class UserService {
     private httpClient: HttpClient,
     @Inject(BASE_PATH) basePath: string,
     private stateService: StateService,
-    private storeService: StoreService
+    private store: Store
   ) {
     this.apiPath = basePath;
   }
@@ -97,6 +97,6 @@ export class UserService {
 
   private clearSessionStatesAndStore() {
     this.stateService.clearSessionState();
-    this.storeService.set(StoreKeys.Posts, []);
+    this.store.reset(STORE_KEYS.Posts);
   }
 }

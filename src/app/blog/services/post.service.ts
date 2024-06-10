@@ -1,14 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { StoreKeys } from 'src/app/core/models/store.model';
-import { StoreService } from 'src/app/core/store.service';
-import { UserService } from 'src/app/core/user.service';
+import { createStoreAdapter } from 'src/app/core/store/create-adapter';
 import {
   ApiResponse,
   ApiResponseNoContent,
 } from 'src/app/shared/models/api/apiResponse';
-import { BaseDto } from 'src/app/shared/models/api/baseDto';
 import { PagedResponse } from 'src/app/shared/models/api/pagedResponse';
 import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
 import { CommentFilter } from 'src/app/shared/models/blog/comment/commentFilter';
@@ -26,17 +23,16 @@ import { Append } from '../models/append.enum';
 export class PostService {
   private readonly apiPath: string = 'https://localhost';
   private readonly endpoint: string = 'post';
+  private readonly storeAdapter = createStoreAdapter<PostDto>('posts');
 
   constructor(
     private httpClient: HttpClient,
-    @Inject(BASE_PATH) basePath: string,
-    private storeService: StoreService,
-    private userService: UserService
+    @Inject(BASE_PATH) basePath: string
   ) {
     this.apiPath = basePath;
   }
 
-  posts$ = this.storeService.select<PostDto[]>(StoreKeys.Posts);
+  posts$ = this.storeAdapter.entities$;
 
   async getPosts(filter: PostFilter, append = Append.Bottom) {
     let localVarQueryParameters = new HttpParams({});
@@ -69,7 +65,7 @@ export class PostService {
       )
     );
 
-    this.appendPosts(response!.result!.data);
+    this.storeAdapter.upsertMany(response!.result!.data);
 
     return response;
   }
@@ -81,7 +77,7 @@ export class PostService {
       )
     );
 
-    this.appendPost(response!.result!);
+    this.storeAdapter.upsertOne(response!.result!);
 
     return response;
   }
@@ -91,7 +87,7 @@ export class PostService {
       this.httpClient.get<ApiResponse<PostDto>>(location)
     );
 
-    this.appendPost(response!.result!);
+    await this.storeAdapter.upsertOne(response!.result!);
 
     return response;
   }
@@ -101,7 +97,7 @@ export class PostService {
       this.httpClient.get<ApiResponse<CommentDto>>(location)
     );
 
-    this.appendComment(response!.result!.postId, response!.result!);
+    this.mapComment(response!.result!.postId, response!.result!);
 
     return response;
   }
@@ -132,7 +128,7 @@ export class PostService {
 
     post.isLiked = isLiked;
 
-    this.appendPost(post);
+    await this.storeAdapter.updateOne({ id: post.id, changes: post });
 
     return response;
   }
@@ -144,7 +140,7 @@ export class PostService {
       )
     );
 
-    this.removePost(id);
+    await this.storeAdapter.removeOne(id);
 
     return response;
   }
@@ -201,56 +197,24 @@ export class PostService {
       })
     );
 
-    this.appendComments(postId, response!.result!.data);
+    this.mapComments(postId, response!.result!.data);
 
     return response;
   }
 
-  private appendComment(postId: string, comment: CommentDto) {
-    this.appendComments(postId, [comment]);
+  private mapComment(postId: string, comment: CommentDto) {
+    this.mapComments(postId, [comment]);
   }
 
-  private async appendComments(postId: string, comments: CommentDto[]) {
-    this.storeService.set(
-      StoreKeys.Posts,
-      this.storeService.value.posts.map((post) => {
-        if (post.id != postId) {
-          return post;
-        } else {
-          const values = this.unique([...comments, ...post.comments]);
-
-          post.comments = this.sort(values);
-
-          return post;
-        }
-      })
-    );
-  }
-
-  private appendPost(data: PostDto) {
-    this.appendPosts([data], Append.Bottom);
-  }
-
-  private appendPosts(data: PostDto[], append = Append.Bottom) {
-    const values = this.unique([...data, ...this.storeService.value.posts]);
-
-    this.storeService.set(StoreKeys.Posts, this.sort(values));
-  }
-
-  private removePost(id: string) {
-    this.storeService.set(
-      StoreKeys.Posts,
-      this.storeService.value.posts.filter((x) => x.id != id)
-    );
-  }
-
-  private unique<T extends BaseDto>(data: T[]): T[] {
-    return data.filter((v, i, a) => a.findIndex((v2) => v2.id === v.id) === i);
-  }
-
-  private sort<T extends BaseDto>(data: T[]): T[] {
-    return data.sort(
-      (a, b) => +new Date(b.createdDate) - +new Date(a.createdDate)
-    );
+  private async mapComments(postId: string, comments: CommentDto[]) {
+    this.storeAdapter.mapOne({
+      id: postId,
+      map: (entity) => {
+        return {
+          ...entity,
+          comments: [...entity.comments, ...comments],
+        };
+      },
+    });
   }
 }

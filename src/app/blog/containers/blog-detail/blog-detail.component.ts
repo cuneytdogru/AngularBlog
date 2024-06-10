@@ -3,10 +3,10 @@ import { Component, ViewChild } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, map, switchMap } from 'rxjs';
-import { StoreKeys } from 'src/app/core/models/store.model';
+import { STORE_KEYS } from 'src/app/core/models/angular-blog-store-state.model';
 import { NotificationService } from 'src/app/core/notification.service';
 import { SpinnerService } from 'src/app/core/spinner.service';
-import { StoreService } from 'src/app/core/store.service';
+import { Store } from 'src/app/core/store/store';
 import { BlogCommentComponent } from 'src/app/shared/components/blog-comment/blog-comment.component';
 import { BlogPostComponent } from 'src/app/shared/components/blog-post/blog-post.component';
 import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
@@ -41,7 +41,7 @@ export class BlogDetailComponent {
     private router: Router,
     private spinnerService: SpinnerService,
     private notificationService: NotificationService,
-    private storeService: StoreService
+    private store: Store
   ) {}
 
   postId$ = this.route.paramMap.pipe(
@@ -58,9 +58,9 @@ export class BlogDetailComponent {
 
   post$ = this.postId$.pipe(
     switchMap((postId) => {
-      return this.storeService
-        .select<PostDto[]>(StoreKeys.Posts)
-        .pipe(map((x) => x.find((y) => y.id == postId)));
+      return this.store
+        .select<PostDto>(STORE_KEYS.Posts)
+        .pipe(map((x) => x.entities[postId]));
     })
   );
 
