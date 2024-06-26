@@ -1,22 +1,26 @@
 import { Predicate } from '@angular/core';
-import { BaseDto } from 'src/app/shared/models/api/baseDto';
-import { EntityMapOne, EntityState, IdSelector, Update } from './models';
+import {
+  Comparer,
+  EntityMapOne,
+  EntityState,
+  IdSelector,
+  Update,
+} from './models';
 import { selectIdValue } from './utils';
 
 export class EntityAdapter<T> {
-  constructor(private selectId: IdSelector<T>) {}
+  constructor(private selectId: IdSelector<T>, private sort?: Comparer<T>) {}
 
   addOne(entity: T, state: EntityState<T>) {
-    const key = selectIdValue(entity, this.selectId);
-
-    if (key in state.entities) return;
-
-    state.ids.push(key);
-    state.entities[key] = entity;
+    this.addMany([entity], state);
   }
 
-  addMany(entities: T[], state: EntityState<T>) {
-    for (const entity of entities) this.addOne(entity, state);
+  addMany(newEntities: T[], state: EntityState<T>) {
+    const models = newEntities.filter(
+      (model) => !(selectIdValue(model, this.selectId) in state.entities)
+    );
+
+    if (models.length) this.merge(models, state);
   }
 
   setAll(entities: T[], state: EntityState<T>) {
@@ -30,11 +34,11 @@ export class EntityAdapter<T> {
     const key = selectIdValue(entity, this.selectId);
 
     if (key in state.entities) {
-      state.entities[key] = entity;
+      state.ids = state.ids.filter((val: string | number) => val !== key);
+      this.merge([entity], state);
+    } else {
+      this.addOne(entity, state);
     }
-
-    state.ids.push(key);
-    state.entities[key] = entity;
   }
 
   setMany(entities: T[], state: EntityState<T>) {
@@ -68,24 +72,24 @@ export class EntityAdapter<T> {
     });
   }
 
-  private takeNewKey(
-    keys: { [id: string]: any },
+  private takeUpdatedModel(
+    models: T[],
     update: Update<T>,
     state: EntityState<T>
   ): boolean {
-    const original = state.entities[update.id];
-    const updated: T = Object.assign({}, original, update.changes);
-    const newKey = selectIdValue(updated, this.selectId);
-    const hasNewKey = newKey !== update.id;
-
-    if (hasNewKey) {
-      keys[update.id] = newKey;
-      delete state.entities[update.id];
+    if (!(update.id in state.entities)) {
+      return false;
     }
 
-    state.entities[newKey] = updated;
+    const original = state.entities[update.id];
+    const updated = Object.assign({}, original, update.changes);
+    const newKey = selectIdValue(updated, this.selectId);
 
-    return hasNewKey;
+    delete state.entities[update.id];
+
+    models.push(updated);
+
+    return newKey !== update.id;
   }
 
   updateOne(update: Update<T>, state: EntityState<T>) {
@@ -93,19 +97,23 @@ export class EntityAdapter<T> {
   }
 
   updateMany(updates: Update<T>[], state: EntityState<T>) {
-    updates = updates.filter((update) => update.id in state.entities);
+    const models: T[] = [];
 
-    const didMutateEntities = updates.length > 0;
+    updates.filter((update) => this.takeUpdatedModel(models, update, state))
+      .length > 0;
 
-    if (didMutateEntities) {
-      const newKeys: { [id: string]: string } = {};
+    if (models.length === 0) {
+      return;
+    } else {
+      state.ids = state.ids.filter((id: any, index: number) => {
+        if (id in state.entities) {
+          return true;
+        }
 
-      const didMutateIds =
-        updates.filter((update) => this.takeNewKey(newKeys, update, state))
-          .length > 0;
+        return false;
+      });
 
-      if (didMutateIds)
-        state.ids = state.ids.map((id: any) => newKeys[id] || id);
+      this.merge(models, state);
     }
   }
 
@@ -144,17 +152,51 @@ export class EntityAdapter<T> {
     );
   }
 
-  public uniqueAndSort<T extends BaseDto>(data: T[]): T[] {
-    return this.sort(this.unique(data));
+  private merge(models: T[], state: EntityState<T>): void {
+    models.sort(this.sort);
+
+    const ids: any[] = [];
+
+    let i = 0;
+    let j = 0;
+
+    while (i < models.length && j < state.ids.length) {
+      const model = models[i];
+      const modelId = selectIdValue(model, this.selectId);
+      const entityId = state.ids[j];
+      const entity = state.entities[entityId];
+
+      if (this.sort!(model, entity!) <= 0) {
+        ids.push(modelId);
+        i++;
+      } else {
+        ids.push(entityId);
+        j++;
+      }
+    }
+
+    if (i < models.length) {
+      state.ids = ids.concat(models.slice(i).map((x) => this.selectId(x)));
+    } else {
+      state.ids = ids.concat(state.ids.slice(j));
+    }
+
+    models.forEach((model, i) => {
+      state.entities[this.selectId(model)] = model;
+    });
   }
 
-  public unique<T extends BaseDto>(data: T[]): T[] {
-    return data.filter((v, i, a) => a.findIndex((v2) => v2.id === v.id) === i);
-  }
+  // public uniqueAndSort<T extends BaseDto>(data: T[]): T[] {
+  //   return this.sort(this.unique(data));
+  // }
 
-  public sort<T extends BaseDto>(data: T[]): T[] {
-    return data.sort(
-      (a, b) => +new Date(b.createdDate) - +new Date(a.createdDate)
-    );
-  }
+  // public unique<T extends BaseDto>(data: T[]): T[] {
+  //   return data.filter((v, i, a) => a.findIndex((v2) => v2.id === v.id) === i);
+  // }
+
+  // public sort<T extends BaseDto>(data: T[]): T[] {
+  //   return data.sort(
+  //     (a, b) => +new Date(b.createdDate) - +new Date(a.createdDate)
+  //   );
+  // }
 }

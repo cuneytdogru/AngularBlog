@@ -1,14 +1,24 @@
 import { inject } from '@angular/core';
 import { filter, map } from 'rxjs';
 import { createEntityAdapter } from './create-adapter';
-import { EntityMapOne, IdSelector, Predicate, Update } from './models';
+import {
+  Comparer,
+  EntityMapOne,
+  IdSelector,
+  Predicate,
+  Update,
+} from './models';
 import { Store } from './store';
 
 export class StoreAdapter<T> {
-  constructor(private storeKey: string, private selectId: IdSelector<T>) {}
+  constructor(
+    private storeKey: string,
+    private selectId: IdSelector<T>,
+    private sort?: Comparer<T>
+  ) {}
 
   private store: Store = inject(Store);
-  private entityAdapter = createEntityAdapter(this.selectId);
+  private entityAdapter = createEntityAdapter(this.selectId, this.sort);
 
   state$ = this.store.select<T>(this.storeKey);
 

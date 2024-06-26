@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { createStoreAdapter } from 'src/app/core/store/create-adapter';
+import { Comparer } from 'src/app/core/store/models';
 import {
   ApiResponse,
   ApiResponseNoContent,
@@ -23,7 +24,18 @@ import { Append } from '../models/append.enum';
 export class PostService {
   private readonly apiPath: string = 'https://localhost';
   private readonly endpoint: string = 'post';
-  private readonly storeAdapter = createStoreAdapter<PostDto>('posts');
+
+  private readonly postSorter: Comparer<PostDto> = (a, b) =>
+    +new Date(b?.createdDate ?? '') - +new Date(a?.createdDate ?? '');
+
+  private readonly commentSorter: Comparer<CommentDto> = (a, b) =>
+    +new Date(b?.createdDate ?? '') - +new Date(a?.createdDate ?? '');
+
+  private readonly storeAdapter = createStoreAdapter<PostDto>(
+    'posts',
+    undefined,
+    this.postSorter
+  );
 
   constructor(
     private httpClient: HttpClient,
@@ -212,7 +224,7 @@ export class PostService {
       map: (entity) => {
         return {
           ...entity,
-          comments: [...entity.comments, ...comments],
+          comments: [...entity.comments, ...comments].sort(this.commentSorter),
         };
       },
     });
