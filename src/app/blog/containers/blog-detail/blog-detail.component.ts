@@ -1,13 +1,18 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { firstValueFrom, map, switchMap } from 'rxjs';
+import { STORE_KEYS } from 'src/app/core/models/angular-blog-store-state.model';
+import { NotificationService } from 'src/app/core/notification.service';
 import { SpinnerService } from 'src/app/core/spinner.service';
+import { Store } from 'src/app/core/store/store';
 import { BlogCommentComponent } from 'src/app/shared/components/blog-comment/blog-comment.component';
 import { BlogPostComponent } from 'src/app/shared/components/blog-post/blog-post.component';
 import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
+import { CreateCommentDto } from 'src/app/shared/models/blog/comment/createCommentDto';
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
+import { BlogCommentFormComponent } from '../../components/blog-comment-form/blog-comment-form.component';
 import { PostService } from '../../services/post.service';
 
 @Component({
@@ -18,46 +23,48 @@ import { PostService } from '../../services/post.service';
   imports: [
     BlogPostComponent,
     BlogCommentComponent,
+    BlogCommentFormComponent,
     AsyncPipe,
     NgIf,
     NgFor,
     MatDividerModule,
   ],
 })
-export class BlogDetailComponent implements OnInit {
-  private loadedComments = 0;
+export class BlogDetailComponent {
   private DEFAULT_TAKE = 10;
 
-  private _post$ = new BehaviorSubject<PostDto | undefined>(undefined);
-  protected post$ = this._post$.asObservable();
-
-  private _comments$ = new BehaviorSubject<CommentDto[]>([]);
-  protected comments$ = this._comments$.asObservable();
+  @ViewChild(BlogCommentFormComponent) commentForm!: BlogCommentFormComponent;
 
   constructor(
     private postService: PostService,
     private route: ActivatedRoute,
     private router: Router,
-    private spinnerService: SpinnerService
+    private spinnerService: SpinnerService,
+    private notificationService: NotificationService,
+    private store: Store
   ) {}
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe(async (params) => {
+  postId$ = this.route.paramMap.pipe(
+    switchMap(async (params) => {
       const postId = params.get('id') as string;
 
       const response = await this.postService.getPost(postId);
 
       if (response.isError) this.router.navigate(['404']);
 
-      const post = response.result;
+      return postId;
+    })
+  );
 
-      this._post$.next(post);
+  post$ = this.postId$.pipe(
+    switchMap((postId) => {
+      return this.store
+        .select<PostDto>(STORE_KEYS.Posts)
+        .pipe(map((x) => x.entities[postId]));
+    })
+  );
 
-      if (post?.comments) this._comments$.next(post.comments);
-
-      this.loadedComments = post?.comments.length ?? 0;
-    });
-  }
+  loadedCommentsCount$ = this.post$.pipe(map((x) => x?.comments.length ?? 0));
 
   isLoading$ = this.spinnerService.visibility$;
 
@@ -71,6 +78,18 @@ export class BlogDetailComponent implements OnInit {
 
   sharePost(post: PostDto) {
     //TODO: Copy link
+  }
+
+  async sendComment(postId: string, commentText: string) {
+    const resourcePath = await this.postService.addComment(postId, {
+      text: commentText,
+    } as CreateCommentDto);
+
+    await this.postService.getCommentFromLocation(resourcePath!);
+
+    this.commentForm.reset();
+
+    this.notificationService.showSuccess('Comment posted.');
   }
 
   navigateToProfile(post: PostDto) {
@@ -89,20 +108,12 @@ export class BlogDetailComponent implements OnInit {
     return item.id;
   }
 
-  loadMoreComments(post: PostDto) {
-    this.postService
-      .getComments(post.id, {
-        skip: this.loadedComments,
-        take: this.DEFAULT_TAKE,
-      })
-      .then((response) => {
-        if (response.result?.data) {
-          this._comments$.next([
-            ...this._comments$.value,
-            ...response.result?.data,
-          ]);
-          this.loadedComments += this.DEFAULT_TAKE;
-        }
-      });
+  async loadMoreComments(post: PostDto) {
+    const loadedCommentsCount = await firstValueFrom(this.loadedCommentsCount$);
+
+    await this.postService.getComments(post.id, {
+      skip: loadedCommentsCount,
+      take: this.DEFAULT_TAKE,
+    });
   }
 }

@@ -4,7 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/core/auth.service';
+import { map } from 'rxjs';
+import { UserService } from 'src/app/core/user.service';
 import { FooterComponent } from '../footer/footer.component';
 
 @Component({
@@ -21,16 +22,16 @@ import { FooterComponent } from '../footer/footer.component';
   ],
 })
 export class UserMenuComponent {
-  userFullName$ = this.authService.userFullName$;
+  userFullName$ = this.userService.user$.pipe(map((x) => x.fullName));
 
   @Output() userNavClose = new EventEmitter();
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private userService: UserService) {}
 
   async logout() {
     this.userNavClose.emit();
     this.router.navigate(['/']);
 
-    await this.authService.logout();
+    await this.userService.logout();
   }
 }

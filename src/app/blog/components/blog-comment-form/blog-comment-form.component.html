@@ -1,0 +1,13 @@
+<form [formGroup]="commentForm" class="comment-form">
+  <mat-form-field subscriptSizing="dynamic">
+    <input matInput placeholder="Leave a comment..." formControlName="text" />
+    <button
+      mat-icon-button
+      matSuffix
+      (click)="onSubmit()"
+      [disabled]="commentForm.invalid || (isLoading$ | async)"
+    >
+      <mat-icon>send</mat-icon>
+    </button>
+  </mat-form-field>
+</form>

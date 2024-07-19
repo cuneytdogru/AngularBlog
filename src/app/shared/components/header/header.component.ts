@@ -1,23 +1,15 @@
-import { AsyncPipe, CommonModule, NgIf } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  HostListener,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { Component, EventEmitter, HostListener, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
-import { DEFAULT_USER_NAME } from '../../models/constants/default-user-name';
-import { SMALL_WIDTH, XSMALL_WIDTH } from '../../models/constants/media-size';
+import { map } from 'rxjs';
+import { UserService } from 'src/app/core/user.service';
+import { SMALL_WIDTH } from '../../models/constants/media-size';
 import { APPLICATION_TITLE } from '../../models/constants/title';
 import { NavigationMenuComponent } from '../navigation-menu/navigation-menu.component';
-import { AuthService } from 'src/app/core/auth.service';
-import { map } from 'rxjs';
-import { JwtToken } from '../../models/auth/JwtToken';
 
 @Component({
   standalone: true,
@@ -41,14 +33,14 @@ export class HeaderComponent {
 
   title = APPLICATION_TITLE;
 
-  userFullName$ = this.authService.userFullName$;
+  userFullName$ = this.userService.user$.pipe(map((x) => x.fullName));
 
   screenHeight = 0;
   screenWidth = 0;
 
   showNavMenu = false;
 
-  constructor(private authService: AuthService) {
+  constructor(private userService: UserService) {
     this.getScreenSize();
   }
 

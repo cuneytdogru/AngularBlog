@@ -1,16 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { StoreKeys } from 'src/app/core/models/store.model';
-import { StoreService } from 'src/app/core/store.service';
+import { createStoreAdapter } from 'src/app/core/store/create-adapter';
+import { Comparer } from 'src/app/core/store/models';
 import {
   ApiResponse,
   ApiResponseNoContent,
 } from 'src/app/shared/models/api/apiResponse';
-import { BaseDto } from 'src/app/shared/models/api/baseDto';
 import { PagedResponse } from 'src/app/shared/models/api/pagedResponse';
 import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
 import { CommentFilter } from 'src/app/shared/models/blog/comment/commentFilter';
+import { CreateCommentDto } from 'src/app/shared/models/blog/comment/createCommentDto';
 import { CreatePostDto } from 'src/app/shared/models/blog/post/createPostDto';
 import { LikePostDto } from 'src/app/shared/models/blog/post/likePostDto';
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
@@ -25,15 +25,26 @@ export class PostService {
   private readonly apiPath: string = 'https://localhost';
   private readonly endpoint: string = 'post';
 
+  private readonly postSorter: Comparer<PostDto> = (a, b) =>
+    +new Date(b?.createdDate ?? '') - +new Date(a?.createdDate ?? '');
+
+  private readonly commentSorter: Comparer<CommentDto> = (a, b) =>
+    +new Date(b?.createdDate ?? '') - +new Date(a?.createdDate ?? '');
+
+  private readonly storeAdapter = createStoreAdapter<PostDto>(
+    'posts',
+    undefined,
+    this.postSorter
+  );
+
   constructor(
     private httpClient: HttpClient,
-    @Inject(BASE_PATH) basePath: string,
-    private storeService: StoreService
+    @Inject(BASE_PATH) basePath: string
   ) {
     this.apiPath = basePath;
   }
 
-  posts$ = this.storeService.select<PostDto[]>(StoreKeys.Posts);
+  posts$ = this.storeAdapter.entities$;
 
   async getPosts(filter: PostFilter, append = Append.Bottom) {
     let localVarQueryParameters = new HttpParams({});
@@ -66,7 +77,7 @@ export class PostService {
       )
     );
 
-    this.appendPosts(response!.result!.data);
+    this.storeAdapter.upsertMany(response!.result!.data);
 
     return response;
   }
@@ -78,7 +89,7 @@ export class PostService {
       )
     );
 
-    this.appendPost(response!.result!);
+    this.storeAdapter.upsertOne(response!.result!);
 
     return response;
   }
@@ -88,7 +99,17 @@ export class PostService {
       this.httpClient.get<ApiResponse<PostDto>>(location)
     );
 
-    this.appendPost(response!.result!);
+    await this.storeAdapter.upsertOne(response!.result!);
+
+    return response;
+  }
+
+  async getCommentFromLocation(location: string) {
+    const response = await firstValueFrom(
+      this.httpClient.get<ApiResponse<CommentDto>>(location)
+    );
+
+    this.mapComment(response!.result!.postId, response!.result!);
 
     return response;
   }
@@ -119,7 +140,7 @@ export class PostService {
 
     post.isLiked = isLiked;
 
-    this.appendPost(post);
+    await this.storeAdapter.updateOne({ id: post.id, changes: post });
 
     return response;
   }
@@ -131,9 +152,23 @@ export class PostService {
       )
     );
 
-    this.removePost(id);
+    await this.storeAdapter.removeOne(id);
 
     return response;
+  }
+
+  async addComment(postId: string, comment: CreateCommentDto) {
+    const response = await firstValueFrom(
+      this.httpClient.post<ApiResponseNoContent>(
+        `${this.apiPath}/${this.endpoint}/${encodeURIComponent(
+          String(postId)
+        )}/comments`,
+        comment,
+        { observe: 'response' }
+      )
+    );
+
+    return response.headers.get('location');
   }
 
   async getComments(postId: string, filter: CommentFilter) {
@@ -174,36 +209,24 @@ export class PostService {
       })
     );
 
+    this.mapComments(postId, response!.result!.data);
+
     return response;
   }
 
-  private appendPost(data: PostDto) {
-    this.appendPosts([data], Append.Bottom);
+  private mapComment(postId: string, comment: CommentDto) {
+    this.mapComments(postId, [comment]);
   }
 
-  private removePost(id: string) {
-    this.storeService.set(
-      StoreKeys.Posts,
-      this.storeService.value.posts.filter((x) => x.id != id)
-    );
-  }
-
-  private appendPosts(data: PostDto[], append = Append.Bottom) {
-    let values = [];
-    if (append === Append.Top)
-      values = this.unique([...data, ...this.storeService.value.posts]);
-    else values = this.unique([...this.storeService.value.posts, ...data]);
-
-    this.storeService.set(StoreKeys.Posts, this.sort(values));
-  }
-
-  private unique<T extends BaseDto>(data: T[]): T[] {
-    return data.filter((v, i, a) => a.findIndex((v2) => v2.id === v.id) === i);
-  }
-
-  private sort<T extends BaseDto>(data: T[]): T[] {
-    return data.sort(
-      (a, b) => +new Date(b.createdDate) - +new Date(a.createdDate)
-    );
+  private async mapComments(postId: string, comments: CommentDto[]) {
+    this.storeAdapter.mapOne({
+      id: postId,
+      map: (entity) => {
+        return {
+          ...entity,
+          comments: [...entity.comments, ...comments].sort(this.commentSorter),
+        };
+      },
+    });
   }
 }

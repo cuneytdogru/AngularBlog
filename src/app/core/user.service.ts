@@ -10,14 +10,15 @@ import { BASE_PATH } from 'src/app/shared/models/constants/base-path';
 import { JwtToken } from '../shared/models/auth/JwtToken';
 import { LoginRequestDto } from '../shared/models/auth/loginRequestDto';
 import { LoginResponseDto } from '../shared/models/auth/loginResponseDto';
-import { StoreKeys } from './models/store.model';
+import { User } from '../shared/models/auth/user';
+import { STORE_KEYS } from './models/angular-blog-store-state.model';
 import { StateService } from './state.service';
-import { StoreService } from './store.service';
+import { Store } from './store/store';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class UserService {
   private readonly apiPath: string = 'https://localhost';
   private readonly endpoint: string = 'auth';
 
@@ -34,21 +35,23 @@ export class AuthService {
     map((token) => token && new Date(token.exp) <= new Date())
   );
 
-  userFullName$ = this.jwtToken$.pipe(
+  user$ = this.jwtToken$.pipe(
     filter(Boolean),
-    map((token: JwtToken) => token.name)
-  );
-
-  userId$ = this.jwtToken$.pipe(
-    filter(Boolean),
-    map((token: JwtToken) => token.sid)
+    map((token: JwtToken) => {
+      return {
+        email: token.email,
+        fullName: token.name,
+        userName: token.sub,
+        id: token.sid,
+      } as User;
+    })
   );
 
   constructor(
     private httpClient: HttpClient,
     @Inject(BASE_PATH) basePath: string,
     private stateService: StateService,
-    private storeService: StoreService
+    private store: Store
   ) {
     this.apiPath = basePath;
   }
@@ -94,6 +97,6 @@ export class AuthService {
 
   private clearSessionStatesAndStore() {
     this.stateService.clearSessionState();
-    this.storeService.set(StoreKeys.Posts, []);
+    this.store.reset(STORE_KEYS.Posts);
   }
 }
