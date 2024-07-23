@@ -14,11 +14,10 @@ import { SpinnerService } from 'src/app/core/spinner.service';
 import { StateService } from 'src/app/core/state.service';
 import { BlogPostSkeletonComponent } from 'src/app/shared/components/blog-post-skeleton/blog-post-skeleton.component';
 import { BlogPostComponent } from 'src/app/shared/components/blog-post/blog-post.component';
-import { CreatePostDto } from 'src/app/shared/models/blog/post/createPostDto';
+import { CreatePostRequestDto } from 'src/app/shared/models/blog/post/createPostDto';
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
 import { DEFAULT_TAKE } from 'src/app/shared/models/constants/filter';
 import { BlogFormComponent } from '../../components/blog-form/blog-form.component';
-import { Append } from '../../models/append.enum';
 import { PostService } from '../../services/post.service';
 
 @Component({
@@ -103,10 +102,7 @@ export class BlogComponent implements AfterViewInit {
   }
 
   async onScrollUp() {
-    await this.postService.getPosts(
-      { skip: 0, take: DEFAULT_TAKE },
-      Append.Top
-    );
+    await this.postService.getPosts({ skip: 0, take: DEFAULT_TAKE });
   }
 
   trackPost(index: number, item: PostDto) {
@@ -137,7 +133,7 @@ export class BlogComponent implements AfterViewInit {
     this.router.navigate(['main', 'profile', post.user.userName]);
   }
 
-  async createPost(post: CreatePostDto) {
+  async createPost(post: CreatePostRequestDto) {
     const resourcePath = await this.postService.createPost(post);
 
     const createdPost = await this.postService.getPostFromLocation(

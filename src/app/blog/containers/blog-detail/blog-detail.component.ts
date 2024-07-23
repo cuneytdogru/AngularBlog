@@ -10,7 +10,7 @@ import { Store } from 'src/app/core/store/store';
 import { BlogCommentComponent } from 'src/app/shared/components/blog-comment/blog-comment.component';
 import { BlogPostComponent } from 'src/app/shared/components/blog-post/blog-post.component';
 import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
-import { CreateCommentDto } from 'src/app/shared/models/blog/comment/createCommentDto';
+import { CreateCommentRequestDto } from 'src/app/shared/models/blog/comment/createCommentRequestDto';
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
 import { BlogCommentFormComponent } from '../../components/blog-comment-form/blog-comment-form.component';
 import { PostService } from '../../services/post.service';
@@ -83,7 +83,7 @@ export class BlogDetailComponent {
   async sendComment(postId: string, commentText: string) {
     const resourcePath = await this.postService.addComment(postId, {
       text: commentText,
-    } as CreateCommentDto);
+    } as CreateCommentRequestDto);
 
     await this.postService.getCommentFromLocation(resourcePath!);
 

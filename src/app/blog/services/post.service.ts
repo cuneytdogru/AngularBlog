@@ -10,13 +10,12 @@ import {
 import { PagedResponse } from 'src/app/shared/models/api/pagedResponse';
 import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
 import { CommentFilter } from 'src/app/shared/models/blog/comment/commentFilter';
-import { CreateCommentDto } from 'src/app/shared/models/blog/comment/createCommentDto';
-import { CreatePostDto } from 'src/app/shared/models/blog/post/createPostDto';
-import { LikePostDto } from 'src/app/shared/models/blog/post/likePostDto';
+import { CreateCommentRequestDto } from 'src/app/shared/models/blog/comment/createCommentRequestDto';
+import { CreatePostRequestDto } from 'src/app/shared/models/blog/post/createPostDto';
+import { LikePostRequestDto } from 'src/app/shared/models/blog/post/likePostDto';
 import { PostDto } from 'src/app/shared/models/blog/post/postDto';
 import { PostFilter } from 'src/app/shared/models/blog/post/postFilter';
 import { BASE_PATH } from 'src/app/shared/models/constants/base-path';
-import { Append } from '../models/append.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -46,7 +45,7 @@ export class PostService {
 
   posts$ = this.storeAdapter.entities$;
 
-  async getPosts(filter: PostFilter, append = Append.Bottom) {
+  async getPosts(filter: PostFilter) {
     let localVarQueryParameters = new HttpParams({});
 
     if (filter.skip !== undefined && filter.skip !== null) {
@@ -114,7 +113,7 @@ export class PostService {
     return response;
   }
 
-  async createPost(postDto: CreatePostDto): Promise<string | null> {
+  async createPost(postDto: CreatePostRequestDto): Promise<string | null> {
     const response = await firstValueFrom(
       this.httpClient.post<ApiResponseNoContent>(
         `${this.apiPath}/${this.endpoint}`,
@@ -127,7 +126,7 @@ export class PostService {
   }
 
   async likePost(post: PostDto, isLiked: boolean = true) {
-    const likePostDto = { isLiked: isLiked } as LikePostDto;
+    const likePostDto = { isLiked: isLiked } as LikePostRequestDto;
 
     const response = await firstValueFrom(
       this.httpClient.put<ApiResponseNoContent>(
@@ -157,7 +156,7 @@ export class PostService {
     return response;
   }
 
-  async addComment(postId: string, comment: CreateCommentDto) {
+  async addComment(postId: string, comment: CreateCommentRequestDto) {
     const response = await firstValueFrom(
       this.httpClient.post<ApiResponseNoContent>(
         `${this.apiPath}/${this.endpoint}/${encodeURIComponent(

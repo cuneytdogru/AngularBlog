@@ -1,5 +1,5 @@
 import { BaseDto } from '../../api/baseDto';
 
-export interface CreateCommentDto extends BaseDto {
+export interface CreateCommentRequestDto extends BaseDto {
   text: string;
 }
