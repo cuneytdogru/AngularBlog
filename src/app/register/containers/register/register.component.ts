@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { NotificationService } from 'src/app/core/notification.service';
-import { RegisterDto } from 'src/app/shared/models/register/registerDto';
+import { RegisterUserRequestDto } from 'src/app/shared/models/user/RegisterUserRequestDto';
 import { matchValidator } from 'src/app/shared/validators/matchValidator';
 import { RegisterForm } from '../../models/registerForm';
 import { RegisterService } from '../../services/register.service';
@@ -93,7 +93,7 @@ export class RegisterComponent {
   }
 
   async register() {
-    const registerDto = this.registerForm.value as RegisterDto;
+    const registerDto = this.registerForm.value as RegisterUserRequestDto;
 
     await this.registerService.registerUser(registerDto);
 

@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { SpinnerService } from 'src/app/core/spinner.service';
-import { CreatePostRequestDto } from 'src/app/shared/models/blog/post/createPostDto';
+import { CreatePostRequestDto } from 'src/app/shared/models/blog/post/createPostRequestDto';
 
 @Component({
   standalone: true,
