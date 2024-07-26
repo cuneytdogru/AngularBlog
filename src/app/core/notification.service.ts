@@ -4,6 +4,7 @@ import {
   MatSnackBarHorizontalPosition,
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
+import { ValidationErrorComponent } from '../shared/components/notifications/validation-error/validation-error.component';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +30,23 @@ export class NotificationService {
   showError(message: string): void {
     this.snackBar.open(message, 'X', {
       panelClass: ['error-snackbar'],
+      verticalPosition: this.posY,
+      horizontalPosition: this.posX,
+    });
+  }
+
+  showWarning(message: string): void {
+    this.snackBar.open(message, 'X', {
+      panelClass: ['warning-snackbar'],
+      verticalPosition: this.posY,
+      horizontalPosition: this.posX,
+    });
+  }
+
+  showValidationError(messages: string[]): void {
+    this.snackBar.openFromComponent(ValidationErrorComponent, {
+      data: { messages },
+      panelClass: ['warning-snackbar'],
       verticalPosition: this.posY,
       horizontalPosition: this.posX,
     });

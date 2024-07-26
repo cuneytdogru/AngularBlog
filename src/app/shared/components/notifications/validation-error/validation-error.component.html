@@ -1,0 +1,23 @@
+<div class="snack-container">
+  <div class="header">
+    <span matSnackBarLabel>Validation errors occurred.</span>
+    <div class="actions">
+      <span matSnackBarActions>
+        <button
+          mat-button
+          matSnackBarAction
+          (click)="snackBarRef.dismissWithAction()"
+        >
+          X
+        </button>
+      </span>
+    </div>
+  </div>
+  <div class="content">
+    <ul>
+      <li *ngFor="let message of messages">
+        <span class="mat-body-medium">{{ message }}</span>
+      </li>
+    </ul>
+  </div>
+</div>
