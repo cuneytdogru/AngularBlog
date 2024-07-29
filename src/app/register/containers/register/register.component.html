@@ -29,7 +29,15 @@
               formControlName="email"
               required
             />
-            <mat-error *ngIf="email?.invalid">Invalid e-mail address</mat-error>
+            <mat-error *ngIf="email?.hasError('required')"
+              >E-mail address is required.</mat-error
+            >
+            <mat-error *ngIf="email?.hasError('email')"
+              >Invalid e-mail address</mat-error
+            >
+            <mat-error *ngIf="email?.hasError('emailExists')"
+              >E-mail address already exists.</mat-error
+            >
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -40,7 +48,13 @@
               formControlName="userName"
               required
             />
-            <mat-error *ngIf="userName?.invalid">Invalid user name</mat-error>
+            <mat-error *ngIf="userName?.hasError('required')"
+              >Invalid user name</mat-error
+            >
+
+            <mat-error *ngIf="userName?.hasError('usernameExists')"
+              >Username already exists</mat-error
+            >
           </mat-form-field>
 
           <mat-form-field appearance="outline">

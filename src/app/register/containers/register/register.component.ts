@@ -19,6 +19,8 @@ import { RegisterUserRequestDto } from 'src/app/shared/models/user/RegisterUserR
 import { matchValidator } from 'src/app/shared/validators/matchValidator';
 import { RegisterForm } from '../../models/registerForm';
 import { RegisterService } from '../../services/register.service';
+import { existingEmailAsyncValidator } from '../../validators/existingEmailAsyncValidator';
+import { existingUsernameAsyncValidator } from '../../validators/existingUsernameAsyncValidator';
 
 @Component({
   standalone: true,
@@ -53,10 +55,12 @@ export class RegisterComponent {
       email: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.email],
+        asyncValidators: [existingEmailAsyncValidator(this.registerService)],
       }),
       userName: new FormControl<string>('', {
         nonNullable: true,
         validators: [Validators.required],
+        asyncValidators: [existingUsernameAsyncValidator(this.registerService)],
       }),
       password: new FormControl('', {
         nonNullable: true,
