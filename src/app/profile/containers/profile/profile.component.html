@@ -1,12 +1,21 @@
 <div class="profile-container">
-  <ng-blog-profile-card [profile]="profile$ | async"></ng-blog-profile-card>
+  <ng-container *ngIf="profile$ | async as profile; else loading">
+    <ng-blog-profile-card [profile]="profile"></ng-blog-profile-card>
 
-  <ng-blog-profile-history
-    [posts]="posts$ | async"
-    [comments]="comments$ | async"
-    [likedPosts]="likes$ | async"
-    (postsClicked)="onPostsClicked($event)"
-    (commentsClicked)="onCommentsClicked($event)"
-    (likesClicked)="onLikesClicked($event)"
-  ></ng-blog-profile-history>
+    <ng-blog-profile-history
+      [posts]="posts$ | async"
+      [comments]="comments$ | async"
+      [likedPosts]="likes$ | async"
+      (postsClicked)="onPostsClicked($event)"
+      (commentsClicked)="onCommentsClicked($event)"
+      (likesClicked)="onLikesClicked($event)"
+    ></ng-blog-profile-history>
+  </ng-container>
 </div>
+
+<ng-template #loading>
+  <div class="centered-content">
+    <mat-spinner *ngIf="isLoading$ | async"></mat-spinner>
+    <div *ngIf="!(isLoading$ | async)">Failed to load.</div>
+  </div>
+</ng-template>

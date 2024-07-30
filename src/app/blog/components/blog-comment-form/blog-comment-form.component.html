@@ -1,6 +1,11 @@
 <form [formGroup]="commentForm" class="comment-form">
   <mat-form-field subscriptSizing="dynamic">
-    <input matInput placeholder="Leave a comment..." formControlName="text" />
+    <input
+      matInput
+      placeholder="Leave a comment..."
+      formControlName="text"
+      [disabled]="(isLoading$ | async) ?? false"
+    />
     <button
       mat-icon-button
       matSuffix
@@ -10,4 +15,8 @@
       <mat-icon>send</mat-icon>
     </button>
   </mat-form-field>
+  <mat-progress-bar
+    *ngIf="isLoading$ | async"
+    mode="indeterminate"
+  ></mat-progress-bar>
 </form>

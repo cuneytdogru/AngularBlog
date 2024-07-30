@@ -1,6 +1,7 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, map, switchMap } from 'rxjs';
 import { STORE_KEYS } from 'src/app/core/models/angular-blog-store-state.model';
@@ -28,6 +29,7 @@ import { PostService } from '../../services/post.service';
     NgIf,
     NgFor,
     MatDividerModule,
+    MatProgressSpinnerModule,
   ],
 })
 export class BlogDetailComponent {
