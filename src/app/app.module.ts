@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GlobalErrorHandler } from './core/global-error-handler';
 import { AuthInterceptor } from './core/http-interceptors/auth.interceptor';
+import { ErrorInterceptor } from './core/http-interceptors/error.interceptor';
 import { SpinnerInterceptor } from './core/http-interceptors/spinner.interceptor';
 import { STORE_STATE } from './core/models/angular-blog-store-state.model';
 import { provideStore } from './core/store/provider';
@@ -28,6 +29,11 @@ import { BASE_PATH } from './shared/models/constants/base-path';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
       multi: true,
     },
     {

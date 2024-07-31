@@ -1,0 +1,23 @@
+div.snack-container {
+  display: flex;
+  flex-direction: column;
+
+  div.header {
+    display: flex;
+    justify-content: space-between;
+
+    div.actions {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  div.content {
+    display: flex;
+    justify-content: start;
+
+    li {
+      color: white;
+    }
+  }
+}

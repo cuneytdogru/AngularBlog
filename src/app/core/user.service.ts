@@ -10,7 +10,7 @@ import { BASE_PATH } from 'src/app/shared/models/constants/base-path';
 import { JwtToken } from '../shared/models/auth/JwtToken';
 import { LoginRequestDto } from '../shared/models/auth/loginRequestDto';
 import { LoginResponseDto } from '../shared/models/auth/loginResponseDto';
-import { User } from '../shared/models/auth/user';
+import { TokenUser } from '../shared/models/auth/tokenUser';
 import { STORE_KEYS } from './models/angular-blog-store-state.model';
 import { StateService } from './state.service';
 import { Store } from './store/store';
@@ -43,7 +43,7 @@ export class UserService {
         fullName: token.name,
         userName: token.sub,
         id: token.sid,
-      } as User;
+      } as TokenUser;
     })
   );
 

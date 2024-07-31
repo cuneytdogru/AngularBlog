@@ -21,6 +21,12 @@ body {
     --mat-mdc-snack-bar-button-color: #fff;
     --mdc-snackbar-supporting-text-color: #fff;
   }
+
+  &.warning-snackbar {
+    --mdc-snackbar-container-color: #ffc107;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
 }
 
 .column-container {

@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { SpinnerService } from 'src/app/core/spinner.service';
-import { CreatePostDto } from 'src/app/shared/models/blog/post/createPostDto';
+import { CreatePostRequestDto } from 'src/app/shared/models/blog/post/createPostRequestDto';
 
 @Component({
   standalone: true,
@@ -30,7 +30,7 @@ import { CreatePostDto } from 'src/app/shared/models/blog/post/createPostDto';
   styleUrls: ['./blog-form.component.scss'],
 })
 export class BlogFormComponent {
-  @Output() submit = new EventEmitter<CreatePostDto>();
+  @Output() submit = new EventEmitter<CreatePostRequestDto>();
 
   constructor(
     private fb: FormBuilder,

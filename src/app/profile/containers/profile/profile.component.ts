@@ -1,5 +1,6 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   BehaviorSubject,
@@ -9,6 +10,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
+import { SpinnerService } from 'src/app/core/spinner.service';
 import { ProfileCardComponent } from 'src/app/shared/components/profile-card/profile-card.component';
 import { CommentDto } from 'src/app/shared/models/blog/comment/commentDto';
 import { CommentFilter } from 'src/app/shared/models/blog/comment/commentFilter';
@@ -20,7 +22,13 @@ import { ProfileService } from '../../services/profile.service';
 
 @Component({
   standalone: true,
-  imports: [ProfileCardComponent, ProfileHistoryComponent, AsyncPipe],
+  imports: [
+    ProfileCardComponent,
+    ProfileHistoryComponent,
+    AsyncPipe,
+    MatProgressSpinnerModule,
+    NgIf,
+  ],
   selector: 'ng-blog-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
@@ -29,7 +37,8 @@ export class ProfileComponent {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private spinnerService: SpinnerService
   ) {}
 
   private _posts = new BehaviorSubject<PostDto[]>([]);
@@ -42,6 +51,8 @@ export class ProfileComponent {
   protected likes$ = this._likes.asObservable();
 
   private _profile?: ProfileDto;
+
+  isLoading$ = this.spinnerService.visibility$;
 
   profile$ = this.route.paramMap.pipe(
     map((params) => params.get('userName')),

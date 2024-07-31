@@ -33,4 +33,9 @@
   </div>
 </ng-container>
 
-<ng-template #loading> Loading... </ng-template>
+<ng-template #loading>
+  <div class="centered-content">
+    <mat-spinner *ngIf="isLoading$ | async"></mat-spinner>
+    <div *ngIf="!(isLoading$ | async)">Failed to load.</div>
+  </div>
+</ng-template>

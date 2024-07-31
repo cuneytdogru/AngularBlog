@@ -1,4 +1,4 @@
-export interface RegisterDto {
+export interface RegisterUserRequestDto {
   fullName: string;
   userName: string;
   email: string;

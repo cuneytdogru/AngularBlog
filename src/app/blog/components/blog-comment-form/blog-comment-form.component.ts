@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { SpinnerService } from 'src/app/core/spinner.service';
 
 @Component({
@@ -20,6 +21,7 @@ import { SpinnerService } from 'src/app/core/spinner.service';
     ReactiveFormsModule,
     NgIf,
     AsyncPipe,
+    MatProgressBarModule,
   ],
 })
 export class BlogCommentFormComponent {
